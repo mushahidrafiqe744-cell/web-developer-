@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="16" fill="#143d2c" />
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#f3b01c" stroke-width="2" stroke-opacity="0.4" />
+  <!-- Left Code Chevron < -->
+  <path d="M16 32L23 25M16 32L23 39" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Center Stylized 'A' -->
+  <path d="M26 42L32 20L38 42" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M28.5 35H35.5" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" />
+  <!-- Right Code Chevron > -->
+  <path d="M48 32L41 25M48 32L41 39" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
