@@ -48,6 +48,11 @@ const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9
 const DASHBOARD_IMAGE = '/src/assets/images/modern_saas_dashboard_1790770399121.jpg';
 const PORTFOLIO_IMAGE = '/src/assets/images/web_portfolio_showcase_1790770419289.jpg';
 const MOBILE_APP_IMAGE = '/src/assets/images/project_mobile_app_1790767218255.jpg';
+const ACADEMY_IMAGE = '/src/assets/images/project_academy.jpg';
+const TOWNCLEATS_IMAGE = '/src/assets/images/project_towncleats.jpg';
+const MUSTAFA_IMAGE = '/src/assets/images/project_mustafa.jpg';
+const LOMARO_IMAGE = '/src/assets/images/project_lomaro.jpg';
+const ADVANCED_IMAGE = '/src/assets/images/project_advanced.jpg';
 
 // Credential & Course Badge Images (Official Credentials)
 const CLAUDE_BADGE = '/src/assets/images/claude_badge_1790775567735.jpg';
@@ -468,6 +473,277 @@ export default function App() {
   // Static Metadata elements - projects database
   const projects: Project[] = [
     {
+      id: 'lomaro-pizza',
+      title: 'Handcrafted Lomaro Pizza & AI Sommelier Portal',
+      category: 'Websites',
+      image: LOMARO_IMAGE,
+      client: 'Lomaro Pizzeria & Italian Bistro (Faisalabad)',
+      duration: '2 Months (2026)',
+      role: 'Lead Full-Stack Web & AI Developer',
+      summary: 'A high-performance online food ordering and hot-delivery web application built specifically for Faisalabad. It features an interactive cart system, real-time status order tracker, and a custom gourmet "AI Pizza Sommelier" selection pairing assistant.',
+      technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Vite', 'Lucide Icons', 'Gourmet AI Agent', 'Vercel Deployment'],
+      codeSnippet: `// Multi-Category Shopping Cart & Order State Reducer
+import React, { useReducer } from 'react';
+
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  extraToppings?: { name: string; price: number }[];
+}
+
+type CartAction = 
+  | { type: 'ADD_ITEM'; payload: Omit<CartItem, 'quantity'> }
+  | { type: 'REMOVE_ITEM'; payload: string }
+  | { type: 'UPDATE_QTY'; payload: { id: string; qty: number } };
+
+export function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
+  switch (action.type) {
+    case 'ADD_ITEM': {
+      const exists = state.find(item => item.id === action.payload.id);
+      if (exists) {
+        return state.map(item => 
+          item.id === action.payload.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...state, { ...action.payload, quantity: 1 }];
+    }
+    case 'REMOVE_ITEM':
+      return state.filter(item => item.id !== action.payload);
+    case 'UPDATE_QTY':
+      return state.map(item => 
+        item.id === action.payload.id ? { ...item, quantity: Math.max(1, action.payload.qty) } : item
+      );
+    default:
+      return state;
+  }
+}`,
+      liveSimulation: {
+        url: 'https://pizza-az2a-i6p.vercel.app/',
+        description: 'Features a live hosted version of Lomaro Pizza on Vercel. Select handcrafted pizzas, build your cart with extra toppings, consult the AI Pizza Sommelier, and experience real-time order status updates.'
+      }
+    },
+    {
+      id: 'advanced-group',
+      title: 'ADVANCED Group – Healthcare & Skill Development Portal',
+      category: 'Websites',
+      image: ADVANCED_IMAGE,
+      client: 'ADVANCED Group Institute (Bandipora, J&K)',
+      duration: '3 Months (2026)',
+      role: 'Lead Full-Stack & Systems Architect',
+      summary: 'An integrated, high-conversion institution management and educational portal for Healthcare, Education, and Skill Development courses in Bandipora, J&K. Features comprehensive admissions management workflows, career panels, and a secure interactive operations dashboard.',
+      technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Cabinet Grotesk', 'Vite', 'Vercel Deployment'],
+      codeSnippet: `// Course Registration & Student Admissions Controller Block
+import React, { useState } from 'react';
+
+interface AdmissionApplication {
+  studentName: string;
+  courseSelected: string;
+  department: 'healthcare' | 'education' | 'skills';
+  contactPhone: string;
+  status: 'pending' | 'reviewed' | 'approved';
+}
+
+export function useAdmissionPortal() {
+  const [applications, setApplications] = useState<AdmissionApplication[]>([]);
+
+  const submitApplication = (app: Omit<AdmissionApplication, 'status'>) => {
+    const newApp: AdmissionApplication = { ...app, status: 'pending' };
+    setApplications(prev => [...prev, newApp]);
+    return { success: true, message: 'Application submitted for review.' };
+  };
+
+  const updateStatus = (index: number, newStatus: AdmissionApplication['status']) => {
+    setApplications(prev => prev.map((app, i) => 
+      i === index ? { ...app, status: newStatus } : app
+    ));
+  };
+
+  return { applications, submitApplication, updateStatus };
+}`,
+      liveSimulation: {
+        url: 'https://king-khe2.vercel.app/',
+        description: 'Features the live hosted version of the ADVANCED Group Portal on Vercel. Browse professional healthcare modules, explore course admissions, review workshops, or explore the built-in institutional administrator panels.'
+      }
+    },
+    {
+      id: 'mustafa-creative-director',
+      title: 'Creative Director & Full-Stack Developer Showcase',
+      category: 'Websites',
+      image: MUSTAFA_IMAGE,
+      client: 'Personal & Creative Agency (Abdullah Dev)',
+      duration: '3 Months (2026)',
+      role: 'Creative Director & Full-Stack Lead',
+      summary: 'A high-end, award-winning cinematic developer portfolio and creative showcase platform. Deployed on Vercel with progressive offline capabilities, immersive dark-mode animations, curated VFX/video showcase layouts, and typographic hierarchy utilizing Playfair Display & Space Grotesk.',
+      technologies: ['React 19', 'Next.js', 'Framer Motion', 'Tailwind CSS', 'Service Workers', 'PWA Compliance'],
+      codeSnippet: `// Cinematic Interactive Portfolio Slide Controller
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface PortfolioWork {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  tags: string[];
+}
+
+export function CreativeSlideController({ works }: { works: PortfolioWork[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const nextSlide = () => {
+    setActiveIndex(prev => (prev + 1) % works.length);
+  };
+
+  return (
+    <div className="relative w-full h-[500px] overflow-hidden bg-[#0A0B10]">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={works[activeIndex].id}
+          initial={{ opacity: 0, x: 50, scale: 0.95 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: -50, scale: 0.95 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-black/80 via-black/20 to-transparent"
+        >
+          <span className="text-xs uppercase tracking-widest text-[#f3b01c] font-sans font-semibold">
+            {works[activeIndex].category}
+          </span>
+          <h3 className="font-serif italic text-4xl text-white mt-2">
+            {works[activeIndex].title}
+          </h3>
+          <div className="flex gap-2 mt-4">
+            {works[activeIndex].tags.map(tag => (
+              <span key={tag} className="text-xs font-mono px-3 py-1 border border-white/20 rounded-full text-white/70">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}`,
+      liveSimulation: {
+        url: 'https://mustafa-k4nx.vercel.app/',
+        description: 'Features a live hosted version of the Creative Director Portfolio on Vercel. Experience standard PWA offline support, browse high-fidelity e-commerce sites (Asad Clothes), watch cinematic reels, and inspect typography structures.'
+      }
+    },
+    {
+      id: 'towncleats-football-club',
+      title: 'Towncleats Football Club – 24/7 Turf & Match Portal',
+      category: 'Websites',
+      image: TOWNCLEATS_IMAGE,
+      client: 'Towncleats FC & Sports Complex (Faisalabad)',
+      duration: '2 Months (2026)',
+      role: 'Lead Full-Stack Web Developer',
+      summary: 'A premier 24/7 floodlit synthetic football turf booking & community sports platform for Millat Town, Faisalabad. Built for live pitch slot bookings (7v7 & 5v5), open team friendly match challenges, turf cost-split calculators, live Google Maps geo-routing, and automated WhatsApp booking pipelines.',
+      technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Vite', 'Lucide Icons', 'Google Maps API', 'Vercel Deployment'],
+      codeSnippet: `// 24/7 Match Matchmaking & Pitch Slot Booking Engine
+import { useState } from 'react';
+import { Calendar, Clock, Users, ShieldCheck } from 'lucide-react';
+
+interface PitchSlot {
+  id: string;
+  pitchName: 'Main Floodlit Arena (7v7)' | 'Express Mini Turf (5v5)';
+  timeSlot: string;
+  turfShareType: '50-50 Split' | 'Host Covers All';
+  status: 'Open for Challenge' | 'Reserved';
+  captainName: string;
+}
+
+export function useTurfBookingEngine() {
+  const [activeChallenges, setActiveChallenges] = useState<PitchSlot[]>([]);
+
+  const acceptMatchChallenge = (slotId: string, opposingTeam: string) => {
+    setActiveChallenges(prev =>
+      prev.map(slot =>
+        slot.id === slotId
+          ? { ...slot, status: 'Reserved' as const }
+          : slot
+      )
+    );
+  };
+
+  const calculateSplitShare = (totalPrice: number, splitType: PitchSlot['turfShareType']) => {
+    return splitType === '50-50 Split' ? totalPrice / 2 : totalPrice;
+  };
+
+  return { activeChallenges, acceptMatchChallenge, calculateSplitShare };
+}`,
+      liveSimulation: {
+        url: 'https://fahad-al98.vercel.app/',
+        description: 'Features a live hosted version of the Towncleats Football Club platform on Vercel. Explore 24/7 floodlit pitch reservations, browse open 7v7 and 5v5 friendly match challenges, and test direct WhatsApp management routing.'
+      }
+    },
+    {
+      id: 'web-developer-academy',
+      title: 'Web Developer Academy Platform',
+      category: 'Websites',
+      image: ACADEMY_IMAGE,
+      client: 'Web Developer Academy & Global Tech Institute',
+      duration: '3 Months (2026)',
+      role: 'Lead Frontend Architect & UI Engineer',
+      summary: 'A modern, full-featured academic and coding bootcamp web platform for software engineering, data science, and digital design. Features interactive curriculum track exploration, audited CIRR graduate employment metrics (94.8% placement rate), student & faculty portal, hackathon registration, and dynamic tuition calculators.',
+      technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Vite', 'Lucide Icons', 'Vercel Deployment'],
+      codeSnippet: `// Interactive Program Curriculum Explorer Component
+import React, { useState } from 'react';
+import { BookOpen, Award, Users, CheckCircle } from 'lucide-react';
+
+interface ProgramTrack {
+  id: string;
+  name: string;
+  category: 'engineering' | 'data' | 'design';
+  durationWeeks: number;
+  avgSalary: string;
+  modules: { module: string; weeks: string; topics: string[] }[];
+}
+
+export function ProgramCurriculumModal({ track, onClose }: { track: ProgramTrack; onClose: () => void }) {
+  const [activeTab, setActiveTab] = useState<'modules' | 'outcomes'>('modules');
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 max-w-3xl">
+      <div className="flex items-center justify-between border-b pb-4">
+        <div>
+          <span className="text-xs uppercase font-mono tracking-wider text-cyan-600 font-bold">
+            {track.category.toUpperCase()} TRACK
+          </span>
+          <h3 className="text-2xl font-extrabold text-slate-900">{track.name}</h3>
+        </div>
+        <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+          Avg Salary: {track.avgSalary}
+        </span>
+      </div>
+
+      <div className="mt-6 space-y-4">
+        {track.modules.map((m, idx) => (
+          <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-cyan-500 transition-all">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <span className="font-mono text-cyan-700 font-bold">{m.weeks}</span>
+              <span>Module {idx + 1}</span>
+            </div>
+            <h4 className="font-bold text-slate-800 text-sm mt-1">{m.module}</h4>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {m.topics.map(t => (
+                <span key={t} className="px-2 py-0.5 text-[11px] bg-white border border-slate-200 rounded text-slate-700">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}`,
+      liveSimulation: {
+        url: 'https://web-develpor-lgdu.vercel.app/',
+        description: 'Features the official, live-production Web Developer Academy school platform. Tour the dynamic interactive campus galleries, explore software engineering and design curricula tracks, submit registrations, or test online classrooms.'
+      }
+    },
+    {
       id: 'dashboard',
       title: 'Aura SaaS Analytics Platform',
       category: 'SaaS Dashboards',
@@ -593,7 +869,7 @@ const nextConfig = {
 
 module.exports = nextConfig;`,
       liveSimulation: {
-        url: 'https://abdullah-wab-developer-gud3.vercel.app/',
+        url: 'https://abdullah-wab-developer-2cr3.vercel.app/',
         description: 'Features a live hosted version of the developer portfolio. Experience instant load times, seamless responsive touch adjustments, and fluid interactive animations.'
       }
     }
@@ -1397,50 +1673,50 @@ module.exports = nextConfig;`,
 
             {/* ----------------- Col 2: Floating Info Glass Card ----------------- */}
             <div className="lg:col-span-3">
-              <div className="bg-[#0b2116]/85 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-[#193d2b] shadow-2xl space-y-6 text-left hover:border-[#22c55e]/40 transition-colors duration-300">
+              <div className="bg-[#0b2116]/85 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-[#193d2b] shadow-2xl space-y-6 text-left hover:border-[#22c55e]/40 transition-all duration-500">
                 
                 {/* Experience Start */}
-                <div className="flex items-start gap-3.5 group">
-                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:border-[#22c55e]/50 transition-colors">
-                    <Calendar className="w-5 h-5 text-[#22c55e]" />
+                <div className="flex items-start gap-3.5 group cursor-pointer hover:translate-x-1.5 transition-all duration-300">
+                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[#0d261a] group-hover:border-[#22c55e]/60 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.35)] transition-all duration-300">
+                    <Calendar className="w-5 h-5 text-[#22c55e] group-hover:rotate-6 transition-transform" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block font-semibold group-hover:text-[#22c55e]/70 transition-colors">
                       EXPERIENCE START
                     </span>
-                    <span className="font-bold text-sm text-white mt-0.5 block">
+                    <span className="font-bold text-sm text-white group-hover:text-[#22c55e] transition-colors duration-300 mt-0.5 block">
                       06th August 2016
                     </span>
                   </div>
                 </div>
 
                 {/* Location */}
-                <div className="flex items-start gap-3.5 group">
-                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:border-[#22c55e]/50 transition-colors">
-                    <MapPin className="w-5 h-5 text-[#22c55e]" />
+                <div className="flex items-start gap-3.5 group cursor-pointer hover:translate-x-1.5 transition-all duration-300">
+                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[#0d261a] group-hover:border-[#22c55e]/60 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.35)] transition-all duration-300">
+                    <MapPin className="w-5 h-5 text-[#22c55e] group-hover:scale-110 transition-transform" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block font-semibold group-hover:text-[#22c55e]/70 transition-colors">
                       LOCATION
                     </span>
-                    <span className="font-bold text-sm text-white mt-0.5 block">
+                    <span className="font-bold text-sm text-white group-hover:text-[#22c55e] transition-colors duration-300 mt-0.5 block">
                       Pakistan
                     </span>
                   </div>
                 </div>
 
                 {/* Email */}
-                <div className="flex items-start gap-3.5 group">
-                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:border-[#22c55e]/50 transition-colors">
-                    <Mail className="w-5 h-5 text-[#22c55e]" />
+                <div className="flex items-start gap-3.5 group cursor-pointer hover:translate-x-1.5 transition-all duration-300">
+                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[#0d261a] group-hover:border-[#22c55e]/60 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.35)] transition-all duration-300">
+                    <Mail className="w-5 h-5 text-[#22c55e] group-hover:rotate-6 transition-transform" />
                   </div>
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block font-semibold">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block font-semibold group-hover:text-[#22c55e]/70 transition-colors">
                       EMAIL
                     </span>
                     <a 
                       href="mailto:abdullah.dev.pro@gmail.com" 
-                      className="font-bold text-xs sm:text-sm text-white hover:text-[#22c55e] transition-colors truncate block mt-0.5"
+                      className="font-bold text-xs sm:text-sm text-white group-hover:text-[#22c55e] transition-colors duration-300 truncate block mt-0.5"
                       title="abdullah.dev.pro@gmail.com"
                     >
                       abdullah.dev.pro@gmail.com
@@ -1449,22 +1725,22 @@ module.exports = nextConfig;`,
                 </div>
 
                 {/* WhatsApp / Phone */}
-                <div className="flex items-start gap-3.5 group">
-                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:border-[#22c55e]/50 transition-colors">
-                    <Phone className="w-5 h-5 text-[#22c55e]" />
+                <div className="flex items-start gap-3.5 group cursor-pointer hover:translate-x-1.5 transition-all duration-300">
+                  <div className="w-11 h-11 rounded-xl bg-[#071710] border border-[#193d2b] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-[#0d261a] group-hover:border-[#22c55e]/60 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.35)] transition-all duration-300">
+                    <Phone className="w-5 h-5 text-[#22c55e] group-hover:animate-bounce transition-transform" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block font-semibold group-hover:text-[#22c55e]/70 transition-colors">
                       WHATSAPP / PHONE
                     </span>
                     <a 
                       href="https://wa.me/923290725117?text=Hi%20Abdullah%2C%20I%20visited%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project!"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-bold text-sm text-[#22c55e] hover:text-white transition-colors flex items-center gap-1 mt-0.5"
+                      className="font-bold text-sm text-[#22c55e] group-hover:text-white transition-colors duration-300 flex items-center gap-1 mt-0.5"
                     >
                       <span>03290725117</span>
-                      <span className="text-xs">↗</span>
+                      <span className="text-xs group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">↗</span>
                     </a>
                   </div>
                 </div>
@@ -1538,31 +1814,34 @@ module.exports = nextConfig;`,
             {skillsList.map((skill) => (
               <div 
                 key={skill.id}
-                className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-green/5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-start gap-6 group hover:-translate-y-0.5 animate-fadeIn"
+                className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-green/5 hover:border-brand-yellow/30 shadow-sm hover:shadow-[0_20px_40px_rgba(20,61,44,0.07)] hover:shadow-brand-yellow/5 transition-all duration-500 ease-out flex flex-col sm:flex-row items-start gap-6 group hover:-translate-y-1.5 animate-fadeIn relative overflow-hidden"
               >
-                
+                {/* Decorative hover gradient corner shine */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand-yellow/0 via-brand-yellow/5 to-brand-yellow/20 rounded-bl-full translate-x-12 -translate-y-12 group-hover:translate-x-4 group-hover:-translate-y-4 transition-all duration-700 ease-out pointer-events-none" />
+
                 {/* Left Icon Square with brand SVG icon */}
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${skill.iconBg} border ${skill.iconBorder} flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-300`}>
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${skill.iconBg} border ${skill.iconBorder} flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 group-hover:rotate-6 group-hover:border-brand-yellow/40 transition-all duration-500 ease-out`}>
                   <SkillIcon id={skill.id} />
                 </div>
 
                 {/* Content Block */}
-                <div className="flex-1 w-full">
+                <div className="flex-1 w-full relative z-10">
                   
                   {/* Title and Badge Line */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-                    <h3 className="font-display text-lg sm:text-xl font-bold text-brand-green">
-                      {skill.name}
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-brand-green group-hover:text-brand-green-light transition-colors duration-300 flex items-center gap-2">
+                      <span>{skill.name}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow scale-0 group-hover:scale-100 transition-transform duration-300" />
                     </h3>
                     
                     <div className="flex items-center gap-3 self-start sm:self-auto">
-                      <span className="font-mono text-xs sm:text-sm font-extrabold text-brand-green-light/50 tabular-nums">
+                      <span className="font-mono text-xs sm:text-sm font-extrabold text-brand-green-light/50 group-hover:text-brand-green-light/80 transition-colors duration-300 tabular-nums">
                         {skill.percentage}%
                       </span>
-                      <span className={`px-3 py-1 rounded text-[9px] font-extrabold uppercase tracking-wider ${
+                      <span className={`px-3 py-1 rounded text-[9px] font-extrabold uppercase tracking-wider transition-all duration-300 group-hover:scale-105 ${
                         skill.badge === 'EXPERT' 
-                          ? 'text-[#21759b] bg-sky-50 border border-sky-100/70' 
-                          : 'text-[#2e7d32] bg-emerald-50 border border-emerald-100/70'
+                          ? 'text-[#21759b] bg-sky-50 border border-sky-100/70 group-hover:bg-sky-100' 
+                          : 'text-[#2e7d32] bg-emerald-50 border border-emerald-100/70 group-hover:bg-emerald-100'
                       }`}>
                         {skill.badge}
                       </span>
@@ -1570,14 +1849,14 @@ module.exports = nextConfig;`,
                   </div>
 
                   {/* Description text */}
-                  <p className="text-xs sm:text-sm text-brand-green-light/70 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-brand-green-light/70 group-hover:text-brand-green-light/90 transition-colors duration-300 leading-relaxed">
                     {skill.desc}
                   </p>
 
                   {/* Progressive Thick Progress Line */}
                   <div className="w-full h-2 bg-brand-green/5 rounded-full overflow-hidden mt-4 border border-brand-green/5 relative">
                     <div 
-                      className="h-full bg-brand-yellow rounded-full transition-all duration-1000 ease-out" 
+                      className="h-full bg-brand-yellow rounded-full transition-all duration-1000 ease-out group-hover:bg-[#f3b01c] group-hover:shadow-[0_0_8px_rgba(243,176,28,0.7)]" 
                       style={{ width: `${skill.percentage}%` }}
                     />
                   </div>
@@ -1638,6 +1917,26 @@ module.exports = nextConfig;`,
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     onError={(e) => {
+                      if (project.id === 'web-developer-academy' && e.currentTarget.src !== 'https://web-develpor-lgdu.vercel.app/assets/modern_school_campus_1788520124392-CYfDEsEM.jpg') {
+                        e.currentTarget.src = 'https://web-develpor-lgdu.vercel.app/assets/modern_school_campus_1788520124392-CYfDEsEM.jpg';
+                        return;
+                      }
+                      if (project.id === 'towncleats-football-club' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000&auto=format&fit=crop&q=80') {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000&auto=format&fit=crop&q=80';
+                        return;
+                      }
+                      if (project.id === 'mustafa-creative-director' && e.currentTarget.src !== 'https://mustafa-k4nx.vercel.app/assets/abdullah_blue_suit_setup_1787144900808-CFtA6JO8.jpg') {
+                        e.currentTarget.src = 'https://mustafa-k4nx.vercel.app/assets/abdullah_blue_suit_setup_1787144900808-CFtA6JO8.jpg';
+                        return;
+                      }
+                      if (project.id === 'lomaro-pizza' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80') {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80';
+                        return;
+                      }
+                      if (project.id === 'advanced-group' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80') {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80';
+                        return;
+                      }
                       // Fallback inside absolute image
                       e.currentTarget.style.display = 'none';
                     }}
@@ -1867,7 +2166,7 @@ module.exports = nextConfig;`,
             </div>
 
             <a
-              href="https://wa.me/923001234567?text=Hi%20Abdullah%2C%20I%20am%20interested%20in%20your%201-on-1%20private%20developer%20mentorship%20program!"
+              href="https://wa.me/923019249721?text=Hi%20Abdullah%2C%20I%20am%20interested%20in%20your%201-on-1%20private%20developer%20mentorship%20program!"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-brand-yellow hover:bg-white text-brand-green font-extrabold text-xs uppercase tracking-wider rounded-full shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 shrink-0 flex items-center gap-2"
@@ -2037,8 +2336,8 @@ module.exports = nextConfig;`,
                     </div>
                     <div>
                       <span className="text-xs text-white/50 uppercase tracking-widest font-mono">Direct Call / WhatsApp</span>
-                      <a href="tel:+923000000000" className="block text-sm sm:text-base font-bold hover:text-brand-yellow transition-colors font-mono tracking-wide">
-                        +92 300 123 4567
+                      <a href="tel:+923019249721" className="block text-sm sm:text-base font-bold hover:text-brand-yellow transition-colors font-mono tracking-wide">
+                        +92 301 924 9721
                       </a>
                     </div>
                   </div>
@@ -2271,6 +2570,26 @@ module.exports = nextConfig;`,
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
                 onError={(e) => {
+                  if (selectedProject.id === 'web-developer-academy' && e.currentTarget.src !== 'https://web-develpor-lgdu.vercel.app/assets/modern_school_campus_1788520124392-CYfDEsEM.jpg') {
+                    e.currentTarget.src = 'https://web-develpor-lgdu.vercel.app/assets/modern_school_campus_1788520124392-CYfDEsEM.jpg';
+                    return;
+                  }
+                  if (selectedProject.id === 'towncleats-football-club' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000&auto=format&fit=crop&q=80') {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000&auto=format&fit=crop&q=80';
+                    return;
+                  }
+                  if (selectedProject.id === 'mustafa-creative-director' && e.currentTarget.src !== 'https://mustafa-k4nx.vercel.app/assets/abdullah_blue_suit_setup_1787144900808-CFtA6JO8.jpg') {
+                    e.currentTarget.src = 'https://mustafa-k4nx.vercel.app/assets/abdullah_blue_suit_setup_1787144900808-CFtA6JO8.jpg';
+                    return;
+                  }
+                  if (selectedProject.id === 'lomaro-pizza' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80') {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80';
+                    return;
+                  }
+                  if (selectedProject.id === 'advanced-group' && e.currentTarget.src !== 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80') {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80';
+                    return;
+                  }
                   e.currentTarget.style.display = 'none';
                 }}
               />
@@ -2893,7 +3212,7 @@ module.exports = nextConfig;`,
                   </button>
 
                   <a
-                    href={`https://wa.me/923001234567?text=${encodeURIComponent(`Hi Abdullah, I am inquiring about your certified credential: ${selectedCourse.title} (${selectedCourse.credentialId})`)}`}
+                    href={`https://wa.me/923019249721?text=${encodeURIComponent(`Hi Abdullah, I am inquiring about your certified credential: ${selectedCourse.title} (${selectedCourse.credentialId})`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 sm:flex-none px-6 py-3 bg-[#0e261d] hover:bg-brand-green text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
@@ -2915,7 +3234,7 @@ module.exports = nextConfig;`,
         
         {/* WhatsApp Floating Button */}
         <a
-          href="https://wa.me/923001234567?text=Hi%20Abdullah%2C%20I%20visited%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project!"
+          href="https://wa.me/923019249721?text=Hi%20Abdullah%2C%20I%20visited%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project!"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
