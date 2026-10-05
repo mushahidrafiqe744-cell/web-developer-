@@ -45,21 +45,21 @@ const HERO_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb93
 const ABOUT_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
 // Project images
-const DASHBOARD_IMAGE = '/src/assets/images/modern_saas_dashboard_1790770399121.jpg';
-const PORTFOLIO_IMAGE = '/src/assets/images/web_portfolio_showcase_1790770419289.jpg';
-const MOBILE_APP_IMAGE = '/src/assets/images/project_mobile_app_1790767218255.jpg';
-const ACADEMY_IMAGE = '/src/assets/images/project_academy.jpg';
-const TOWNCLEATS_IMAGE = '/src/assets/images/project_towncleats.jpg';
-const MUSTAFA_IMAGE = '/src/assets/images/project_mustafa.jpg';
-const LOMARO_IMAGE = '/src/assets/images/project_lomaro.jpg';
-const ADVANCED_IMAGE = '/src/assets/images/project_advanced.jpg';
+const DASHBOARD_IMAGE = '/assets/images/modern_saas_dashboard_1790770399121.jpg';
+const PORTFOLIO_IMAGE = '/assets/images/web_portfolio_showcase_1790770419289.jpg';
+const MOBILE_APP_IMAGE = '/assets/images/project_mobile_app_1790767218255.jpg';
+const ACADEMY_IMAGE = '/assets/images/project_academy.jpg';
+const TOWNCLEATS_IMAGE = '/assets/images/project_towncleats.jpg';
+const MUSTAFA_IMAGE = '/assets/images/project_mustafa.jpg';
+const LOMARO_IMAGE = '/assets/images/project_lomaro.jpg';
+const ADVANCED_IMAGE = '/assets/images/project_advanced.jpg';
 
 // Credential & Course Badge Images (Official Credentials)
-const CLAUDE_BADGE = '/src/assets/images/claude_badge_1790775567735.jpg';
-const META_BADGE = '/src/assets/images/meta_badge_1790775585580.jpg';
-const AWS_BADGE = '/src/assets/images/aws_badge_1790775600766.jpg';
-const NEXTJS_BADGE = '/src/assets/images/nextjs_badge_1790775618613.jpg';
-const TAILWIND_BADGE = '/src/assets/images/tailwind_badge_1790775640392.jpg';
+const CLAUDE_BADGE = '/assets/images/claude_badge_1790775567735.jpg';
+const META_BADGE = '/assets/images/meta_badge_1790775585580.jpg';
+const AWS_BADGE = '/assets/images/aws_badge_1790775600766.jpg';
+const NEXTJS_BADGE = '/assets/images/nextjs_badge_1790775618613.jpg';
+const TAILWIND_BADGE = '/assets/images/tailwind_badge_1790775640392.jpg';
 
 // Types and Interfaces
 interface Project {
