@@ -1,11 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="16" fill="#143d2c" />
-  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" stroke="#f3b01c" stroke-width="2" stroke-opacity="0.4" />
-  <!-- Left Code Chevron < -->
-  <path d="M16 32L23 25M16 32L23 39" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-  <!-- Center Stylized 'A' -->
-  <path d="M26 42L32 20L38 42" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-  <path d="M28.5 35H35.5" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" />
-  <!-- Right Code Chevron > -->
-  <path d="M48 32L41 25M48 32L41 39" stroke="#f3b01c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+  <defs>
+    <!-- Premium Gradients -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE082" />
+      <stop offset="50%" stop-color="#FFB300" />
+      <stop offset="100%" stop-color="#FF6F00" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B4D3E" />
+      <stop offset="100%" stop-color="#0F2E22" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD54F" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FFD54F" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Base Rounded Container -->
+  <rect width="64" height="64" rx="18" fill="url(#emeraldGrad)" />
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-opacity="0.9" />
+
+  <!-- Center Ambient Glow -->
+  <circle cx="32" cy="32" r="22" fill="url(#glow)" />
+
+  <!-- Outer Stylized Hexagon -->
+  <polygon points="32,12 48,21 48,39 32,48 16,39 16,21" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-linejoin="round" opacity="0.6" />
+
+  <!-- Monogram A -->
+  <path d="M22 40L32 18L42 40" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M26 31H38" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Code Element: Glowing Center Core -->
+  <circle cx="32" cy="27" r="3" fill="#FFE082" />
 </svg>

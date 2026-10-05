@@ -151,26 +151,28 @@ function BrandLogo({ dark = false }: { dark?: boolean }) {
   return (
     <div className="flex items-center gap-3 group cursor-pointer select-none">
       {/* Dynamic Emblem / Monogram Box */}
-      <div className={`relative w-10 h-10 rounded-2xl ${dark ? 'bg-white/10 border-white/20' : 'bg-brand-green border-brand-yellow/50'} border-2 flex items-center justify-center shadow-md group-hover:shadow-brand-yellow/30 group-hover:scale-105 group-hover:border-brand-yellow transition-all duration-300 overflow-hidden`}>
+      <div className={`relative w-11 h-11 rounded-2xl ${dark ? 'bg-white/10 border-white/20' : 'bg-brand-green border-brand-yellow/60'} border-2 flex items-center justify-center shadow-lg group-hover:shadow-brand-yellow/40 group-hover:scale-105 group-hover:border-brand-yellow transition-all duration-300 overflow-hidden`}>
         {/* Ambient golden glow inside emblem */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/20 via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/30 via-transparent to-brand-yellow/10 opacity-80" />
         
-        {/* Futuristic Developer Monogram SVG (< A >) */}
-        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transform transition-transform duration-300 group-hover:scale-110">
-          {/* Left code chevron */}
-          <path d="M10 22L15 17M10 22L15 27" stroke="#f3b01c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Center stylized bold 'A' */}
-          <path d="M18 29L22 13L26 29" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M19.5 24H24.5" stroke="#f3b01c" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Right code chevron */}
-          <path d="M34 22L29 17M34 22L29 27" stroke="#f3b01c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Futuristic Developer Monogram SVG matching updated Favicon */}
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 transform transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
+          {/* Inner Stylized Outer Hexagon/Diamond */}
+          <polygon points="32,8 50,18 50,46 32,56 14,46 14,18" fill="none" stroke="#f3b01c" strokeWidth="1.5" strokeOpacity="0.4" />
+          
+          {/* Stylized Monogram A */}
+          <path d="M22 44L32 18L42 44" stroke="#FFFFFF" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M26 34H38" stroke="#f3b01c" strokeWidth="3.5" strokeLinecap="round" />
+
+          {/* Code Core Glow Dot */}
+          <circle cx="32" cy="28" r="3.5" fill="#f3b01c" className="animate-pulse" />
         </svg>
       </div>
 
       {/* Typography with glowing status dot */}
       <div className="flex flex-col text-left">
         <div className="flex items-center gap-1.5 leading-none">
-          <span className={`font-display font-extrabold text-lg tracking-tight ${dark ? 'text-white' : 'text-brand-green'} group-hover:text-brand-yellow transition-colors duration-200`}>
+          <span className={`font-display font-extrabold text-xl tracking-tight ${dark ? 'text-white' : 'text-brand-green'} group-hover:text-brand-yellow transition-colors duration-200`}>
             Abdullah
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow inline-block animate-pulse shadow-sm" />
