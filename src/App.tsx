@@ -41,6 +41,9 @@ import {
 // Hero image paths
 const HERO_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const HERO_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
+// Brand logo image path (Pinterest custom emblem)
+const BRAND_LOGO_IMAGE = '/assets/images/brand_logo.jpg';
+const BRAND_LOGO_FALLBACK = 'https://i.pinimg.com/originals/cd/db/8c/cddb8c7026d0c92d325bcb0693fc0e36.jpg';
 // About image path
 const ABOUT_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
@@ -146,27 +149,29 @@ interface SkillItem {
   iconTextLabel: string;
 }
 
-// Modern Developer Brand Logo (< A >)
+// Modern Developer Brand Logo (Custom Pinterest Emblem)
 function BrandLogo({ dark = false }: { dark?: boolean }) {
   return (
     <div className="flex items-center gap-3 group cursor-pointer select-none">
-      {/* Dynamic Emblem / Monogram Box */}
-      <div className={`relative w-11 h-11 rounded-2xl ${dark ? 'bg-white/10 border-white/20' : 'bg-brand-green border-brand-yellow/60'} border-2 flex items-center justify-center shadow-lg group-hover:shadow-brand-yellow/40 group-hover:scale-105 group-hover:border-brand-yellow transition-all duration-300 overflow-hidden`}>
+      {/* Dynamic Emblem / Brand Logo Frame */}
+      <div className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${dark ? 'bg-white/10 border-brand-yellow/60' : 'bg-[#0a1a12] border-brand-yellow/70'} border-2 flex items-center justify-center shadow-lg group-hover:shadow-brand-yellow/40 group-hover:scale-105 group-hover:border-brand-yellow transition-all duration-300 overflow-hidden shrink-0`}>
         {/* Ambient golden glow inside emblem */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/30 via-transparent to-brand-yellow/10 opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/20 via-transparent to-brand-yellow/10 opacity-70 pointer-events-none z-10" />
         
-        {/* Futuristic Developer Monogram SVG matching updated Favicon */}
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 transform transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-          {/* Inner Stylized Outer Hexagon/Diamond */}
-          <polygon points="32,8 50,18 50,46 32,56 14,46 14,18" fill="none" stroke="#f3b01c" strokeWidth="1.5" strokeOpacity="0.4" />
-          
-          {/* Stylized Monogram A */}
-          <path d="M22 44L32 18L42 44" stroke="#FFFFFF" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M26 34H38" stroke="#f3b01c" strokeWidth="3.5" strokeLinecap="round" />
+        {/* Brand Logo Image from Pinterest */}
+        <img 
+          src={BRAND_LOGO_IMAGE}
+          alt="Abdullah Developer Logo"
+          className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110"
+          onError={(e) => {
+            if (e.currentTarget.src !== BRAND_LOGO_FALLBACK) {
+              e.currentTarget.src = BRAND_LOGO_FALLBACK;
+            }
+          }}
+        />
 
-          {/* Code Core Glow Dot */}
-          <circle cx="32" cy="28" r="3.5" fill="#f3b01c" className="animate-pulse" />
-        </svg>
+        {/* Inner subtle golden border ring */}
+        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-brand-yellow/30 pointer-events-none z-10" />
       </div>
 
       {/* Typography with glowing status dot */}
