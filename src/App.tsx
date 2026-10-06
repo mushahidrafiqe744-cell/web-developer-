@@ -41,9 +41,9 @@ import {
 // Hero image paths
 const HERO_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const HERO_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
-// Brand logo image path (Pinterest custom emblem)
-const BRAND_LOGO_IMAGE = '/assets/images/brand_logo.jpg';
-const BRAND_LOGO_FALLBACK = 'https://i.pinimg.com/originals/cd/db/8c/cddb8c7026d0c92d325bcb0693fc0e36.jpg';
+// Brand logo image path (Silver Wings Emblem)
+const BRAND_LOGO_IMAGE = '/assets/images/wings_brand_logo.jpg';
+const BRAND_LOGO_FALLBACK = '/assets/images/wings_brand_logo_1791287049503.jpg';
 // About image path
 const ABOUT_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
