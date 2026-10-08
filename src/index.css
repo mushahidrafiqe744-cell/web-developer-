@@ -52,3 +52,51 @@
   display: inline-block;
   animation: float 4s ease-in-out infinite;
 }
+
+/* Cinematic transition animations */
+@keyframes cinematicZoom {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.15); }
+}
+
+@keyframes spinSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes transitionBar {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.7; }
+  80% { opacity: 0.7; }
+  100% { transform: translateY(-100px) scale(0.6); opacity: 0; }
+}
+
+@keyframes finalFade {
+  0%, 80% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-cinematicZoom {
+  animation: cinematicZoom 3.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+.animate-spinSlow {
+  animation: spinSlow 15s linear infinite;
+}
+
+.animate-transitionBar {
+  animation: transitionBar 3.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-floatUp {
+  animation: floatUp 5s ease-in-out infinite;
+}
+
+.animate-finalFade {
+  animation: finalFade 3.2s forwards;
+}

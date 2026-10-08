@@ -135,6 +135,7 @@ interface Course {
   duration?: string;
   lessonsCount?: number;
   modules?: CourseModule[];
+  verificationUrl?: string;
 }
 
 interface SkillItem {
@@ -149,8 +150,176 @@ interface SkillItem {
   iconTextLabel: string;
 }
 
-// Modern Developer Brand Logo (Custom Pinterest Emblem)
-function BrandLogo({ dark = false }: { dark?: boolean }) {
+interface SectorBranding {
+  id: string;
+  name: string;
+  logoUrl: string;
+  theme: 'blue' | 'green' | 'orange';
+  customUrl?: string;
+}
+
+const DEFAULT_SECTORS: SectorBranding[] = [
+  {
+    id: 'school',
+    name: 'KHAS SCHOOL SYSTEM',
+    logoUrl: '',
+    theme: 'blue',
+    customUrl: ''
+  },
+  {
+    id: 'academy',
+    name: 'KHAS ACADEMY',
+    logoUrl: '',
+    theme: 'green',
+    customUrl: ''
+  },
+  {
+    id: 'it',
+    name: 'KHAS IT SOLUTIONS',
+    logoUrl: '',
+    theme: 'orange',
+    customUrl: ''
+  }
+];
+
+function SectorLogo({ id, logoUrl, className = "w-11 h-11" }: { id: string; logoUrl?: string; className?: string }) {
+  const [imgError, setImgError] = React.useState(false);
+
+  if (logoUrl && !imgError) {
+    return (
+      <div className={`${className} rounded-full overflow-hidden border border-white/20 bg-zinc-950 flex items-center justify-center shrink-0`}>
+        <img
+          src={logoUrl}
+          alt="Sector Custom Logo"
+          className="w-full h-full object-cover object-center"
+          onError={() => setImgError(true)}
+        />
+      </div>
+    );
+  }
+
+  // Fallback high-fidelity SVG logos matching user screenshot
+  switch (id) {
+    case 'school':
+      return (
+        <div className={`${className} rounded-full overflow-hidden bg-[#0a1532] border border-blue-500/50 flex items-center justify-center shrink-0 relative p-1 shadow-lg`}>
+          <svg viewBox="0 0 100 100" className="w-full h-full text-blue-400 fill-current">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#2563eb" strokeWidth="3" />
+            <circle cx="50" cy="50" r="41" fill="#081026" />
+            <g transform="translate(22, 22) scale(0.56)" stroke="#3b82f6" strokeWidth="4.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M50 8C20 8 10 38 50 92C90 38 80 8 50 8Z" stroke="#ef4444" strokeWidth="5.5" />
+              <path d="M25 65C30 50 45 42 55 25" stroke="#3b82f6" strokeWidth="6.5" />
+              <polyline points="45,25 55,25 55,35" stroke="#3b82f6" strokeWidth="6.5" />
+              <circle cx="28" cy="48" r="5.5" fill="#3b82f6" stroke="none" />
+              <path d="M20 62C20 54 36 54 36 62" stroke="#3b82f6" strokeWidth="4.5" />
+            </g>
+            <path id="schoolCurve" d="M12,50 A38,38 0 0,1 88,50" fill="none" />
+            <text className="font-sans font-black text-[10px] fill-white" letterSpacing="1.5">
+              <textPath href="#schoolCurve" startOffset="50%" textAnchor="middle">
+                KHAS SYSTEM
+              </textPath>
+            </text>
+          </svg>
+        </div>
+      );
+    case 'academy':
+      return (
+        <div className={`${className} rounded-full overflow-hidden bg-[#07190f] border border-emerald-500/50 flex items-center justify-center shrink-0 relative p-1 shadow-lg`}>
+          <svg viewBox="0 0 100 100" className="w-full h-full text-emerald-400 fill-current">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#059669" strokeWidth="3" />
+            <circle cx="50" cy="50" r="41" fill="#05120a" />
+            <g transform="translate(25, 25) scale(0.5)" stroke="#fbbf24" strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 62C22 56 46 56 50 18" stroke="#059669" strokeWidth="6" />
+              <path d="M88 62C78 56 54 56 50 18" stroke="#059669" strokeWidth="6" />
+              <path d="M50 18V82" stroke="#fbbf24" strokeWidth="5" />
+              <path d="M12 80C22 74 46 74 50 82" />
+              <path d="M88 80C78 74 54 74 50 82" />
+            </g>
+            <path d="M50,15 L50,6M80,30 L88,22M20,30 L12,22" stroke="#fbbf24" strokeWidth="3.5" strokeLinecap="round" />
+            <path id="academyCurve" d="M12,50 A38,38 0 0,1 88,50" fill="none" />
+            <text className="font-sans font-black text-[9.5px] fill-white" letterSpacing="1.6">
+              <textPath href="#academyCurve" startOffset="50%" textAnchor="middle">
+                KHAS ACADEMY
+              </textPath>
+            </text>
+          </svg>
+        </div>
+      );
+    case 'it':
+      return (
+        <div className={`${className} rounded-full overflow-hidden bg-[#0e0f19] border border-orange-500/50 flex items-center justify-center shrink-0 relative p-1 shadow-lg`}>
+          <svg viewBox="0 0 100 100" className="w-full h-full text-orange-400 fill-current">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#ea580c" strokeWidth="3" />
+            <circle cx="50" cy="50" r="41" fill="#090a12" />
+            <g transform="translate(25, 25) scale(0.5)" stroke="#38bdf8" strokeWidth="6.5" fill="none" strokeLinecap="round">
+              <circle cx="50" cy="50" r="26" stroke="#ea580c" strokeWidth="8" />
+              <path d="M50,14 V2M50,86 V74M14,50 H2M86,50 H74M24,24 L14,14M76,76 L86,86M24,76 L14,86M76,24 L86,14" stroke="#ea580c" strokeWidth="9" />
+              <circle cx="50" cy="50" r="10" fill="#38bdf8" stroke="none" />
+              <path d="M40,50 C25,50 20,35 10,35" stroke="#38bdf8" strokeWidth="5.5" />
+              <path d="M60,50 C75,50 80,65 90,65" stroke="#38bdf8" strokeWidth="5.5" />
+            </g>
+            <path id="itCurve" d="M12,50 A38,38 0 0,1 88,50" fill="none" />
+            <text className="font-sans font-black text-[10px] fill-white" letterSpacing="1.5">
+              <textPath href="#itCurve" startOffset="50%" textAnchor="middle">
+                IT SOLUTIONS
+              </textPath>
+            </text>
+          </svg>
+        </div>
+      );
+    default:
+      return (
+        <div className={`${className} rounded-full overflow-hidden bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0`}>
+          <Code2 className="w-5 h-5 text-zinc-400" />
+        </div>
+      );
+  }
+}
+
+// Modern Developer Brand Logo (Custom Pinterest Emblem & Dynamic Sectors)
+function BrandLogo({ 
+  dark = false, 
+  activeSector,
+  customLogo,
+  customName,
+  customDesignation
+}: { 
+  dark?: boolean; 
+  activeSector?: SectorBranding | null;
+  customLogo?: string;
+  customName?: string;
+  customDesignation?: string;
+}) {
+  const logoSrc = customLogo || BRAND_LOGO_IMAGE;
+  const nameText = customName || 'Abdullah';
+  const designationText = customDesignation || 'Web Developer';
+
+  if (activeSector) {
+    return (
+      <div className="flex items-center gap-3 group cursor-pointer select-none">
+        {/* Dynamic Emblem / Brand Logo Frame */}
+        <SectorLogo 
+          id={activeSector.id} 
+          logoUrl={activeSector.logoUrl} 
+          className="w-11 h-11 sm:w-12 sm:h-12 border-2 border-brand-yellow/70 shadow-lg group-hover:shadow-brand-yellow/40 group-hover:scale-105 group-hover:border-brand-yellow transition-all duration-300 shrink-0" 
+        />
+
+        {/* Typography with glowing status dot */}
+        <div className="flex flex-col text-left">
+          <div className="flex items-center gap-1.5 leading-none">
+            <span className={`font-display font-extrabold text-base sm:text-lg tracking-tight ${dark ? 'text-white' : 'text-brand-green'} group-hover:text-brand-yellow transition-colors duration-200`}>
+              {activeSector.name}
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow inline-block animate-pulse shadow-sm" />
+          </div>
+          <span className={`text-[8px] font-mono uppercase tracking-[0.24em] ${dark ? 'text-white/60' : 'text-brand-green-light/70'} font-bold mt-1`}>
+            {activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'IT & Software Agency'}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3 group cursor-pointer select-none">
       {/* Dynamic Emblem / Brand Logo Frame */}
@@ -158,10 +327,10 @@ function BrandLogo({ dark = false }: { dark?: boolean }) {
         {/* Ambient golden glow inside emblem */}
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/20 via-transparent to-brand-yellow/10 opacity-70 pointer-events-none z-10" />
         
-        {/* Brand Logo Image from Pinterest */}
+        {/* Brand Logo Image from Pinterest or Local Upload */}
         <img 
-          src={BRAND_LOGO_IMAGE}
-          alt="Abdullah Developer Logo"
+          src={logoSrc}
+          alt={`${nameText} Logo`}
           className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110"
           onError={(e) => {
             if (e.currentTarget.src !== BRAND_LOGO_FALLBACK) {
@@ -178,12 +347,12 @@ function BrandLogo({ dark = false }: { dark?: boolean }) {
       <div className="flex flex-col text-left">
         <div className="flex items-center gap-1.5 leading-none">
           <span className={`font-display font-extrabold text-xl tracking-tight ${dark ? 'text-white' : 'text-brand-green'} group-hover:text-brand-yellow transition-colors duration-200`}>
-            Abdullah
+            {nameText}
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow inline-block animate-pulse shadow-sm" />
         </div>
         <span className={`text-[8px] font-mono uppercase tracking-[0.24em] ${dark ? 'text-white/60' : 'text-brand-green-light/70'} font-bold mt-1`}>
-          Web Developer
+          {designationText}
         </span>
       </div>
     </div>
@@ -235,6 +404,149 @@ function SkillIcon({ id }: { id: string }) {
 }
 
 export default function App() {
+  // Sector Gateway & Branding Customization States
+  const [sectors, setSectors] = useState<SectorBranding[]>(() => {
+    const saved = localStorage.getItem('khas_sectors_branding');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return DEFAULT_SECTORS;
+  });
+
+  const [activeSector, setActiveSector] = useState<SectorBranding | null>(() => {
+    const saved = localStorage.getItem('khas_active_sector_id');
+    if (saved) {
+      const savedSectors = localStorage.getItem('khas_sectors_branding');
+      const currentSectors = savedSectors ? JSON.parse(savedSectors) : DEFAULT_SECTORS;
+      const found = currentSectors.find((s: any) => s.id === saved);
+      if (found) return found;
+    }
+    return null;
+  });
+
+  const [showBrandingPanel, setShowBrandingPanel] = useState(false);
+  const [tempSectors, setTempSectors] = useState<SectorBranding[]>([]);
+
+  // Gateway Screen & Redirection Customization States
+  const [showGatewayScreen, setShowGatewayScreen] = useState(() => {
+    const savedActive = localStorage.getItem('khas_active_sector_id');
+    return !savedActive;
+  });
+  const [editingSectorId, setEditingSectorId] = useState<string | null>(null);
+  const [tempSectorName, setTempSectorName] = useState('');
+  const [tempSectorLogo, setTempSectorLogo] = useState('');
+  const [tempSectorUrl, setTempSectorUrl] = useState('');
+
+  // Cinematic Gateway Transition States
+  const [isTransitionActive, setIsTransitionActive] = useState(false);
+  const [transitionPendingSector, setTransitionPendingSector] = useState<SectorBranding | null>(null);
+  const [isEnteringDeveloper, setIsEnteringDeveloper] = useState(false);
+
+  const triggerGatewayTransition = (sector: SectorBranding | null) => {
+    setTransitionPendingSector(sector);
+    setIsTransitionActive(true);
+    setIsEnteringDeveloper(sector === null);
+
+    // Play cinematic animation for 3.2 seconds, then enter portfolio
+    setTimeout(() => {
+      if (sector) {
+        localStorage.setItem('khas_active_sector_id', sector.id);
+        setActiveSector(sector);
+      } else {
+        localStorage.removeItem('khas_active_sector_id');
+        setActiveSector(null);
+      }
+      setShowGatewayScreen(false);
+      setIsTransitionActive(false);
+    }, 3200);
+  };
+
+  // Dynamic Portfolio Customizer States
+  const [developerName, setDeveloperName] = useState(() => {
+    return localStorage.getItem('portfolio_developer_name') || 'Abdullah';
+  });
+  const [developerDesignation, setDeveloperDesignation] = useState(() => {
+    return localStorage.getItem('portfolio_developer_designation') || 'Web Developer';
+  });
+  const [developerLogo, setDeveloperLogo] = useState(() => {
+    return localStorage.getItem('portfolio_developer_logo') || BRAND_LOGO_IMAGE;
+  });
+  const [developerHeroImage, setDeveloperHeroImage] = useState(() => {
+    return localStorage.getItem('portfolio_developer_hero_image') || HERO_IMAGE;
+  });
+  const [showCustomizer, setShowCustomizer] = useState(() => {
+    return localStorage.getItem('portfolio_has_customized_v1') !== 'true';
+  });
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image is too large. Please select an image under 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setDeveloperLogo(base64String);
+        localStorage.setItem('portfolio_developer_logo', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleHeroUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image is too large. Please select an image under 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setDeveloperHeroImage(base64String);
+        localStorage.setItem('portfolio_developer_hero_image', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleResetCustomizer = () => {
+    if (window.confirm("Are you sure you want to reset your portfolio settings back to default Abdullah branding?")) {
+      setDeveloperName('Abdullah');
+      setDeveloperDesignation('Web Developer');
+      setDeveloperLogo(BRAND_LOGO_IMAGE);
+      setDeveloperHeroImage(HERO_IMAGE);
+      localStorage.removeItem('portfolio_developer_name');
+      localStorage.removeItem('portfolio_developer_designation');
+      localStorage.removeItem('portfolio_developer_logo');
+      localStorage.removeItem('portfolio_developer_hero_image');
+      localStorage.setItem('portfolio_has_customized_v1', 'true');
+      setShowCustomizer(false);
+    }
+  };
+
+  const handleSaveSectorBranding = (id: string, name: string, logo: string, url: string) => {
+    const updatedSectors = sectors.map(sec => {
+      if (sec.id === id) {
+        return {
+          ...sec,
+          name: name.trim(),
+          logoUrl: logo.trim(),
+          customUrl: url.trim()
+        };
+      }
+      return sec;
+    });
+    setSectors(updatedSectors);
+    localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+    setEditingSectorId(null);
+    alert(`${name} settings saved successfully!`);
+  };
+
   // Navigation active section state
   const [activeSection, setActiveSection] = useState('home');
 
@@ -243,6 +555,7 @@ export default function App() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
   const [projectFilter, setProjectFilter] = useState('All');
+  const [copiedLink, setCopiedLink] = useState(false);
   
   // Custom Reviews state
   const [testimonials, setTestimonials] = useState<Testimonial[]>([
@@ -933,15 +1246,16 @@ module.exports = nextConfig;`,
     {
       id: 'claude-certified-specialist',
       title: 'Claude Certified Specialist — Developer Badge',
-      trackCategory: 'AI & CLAUDE API DEVELOPMENT',
+      trackCategory: 'ANTHROPIC CLAUDE ACADEMY',
       category: 'AI & LLM',
-      institution: 'Claude Academy (Anthropic)',
+      institution: 'Anthropic Claude Academy',
       year: '2025',
       verifiedBadgeText: 'Verified Anthropic Claude Badge',
       badgeImage: CLAUDE_BADGE,
+      verificationUrl: 'https://academy.claude.com/badges/763614b5-7d85-487b-b574-b3a2226c0fd0',
       description: 'Official Anthropic Claude Academy certification verifying mastery in engineering with Claude, prompt optimization, API integrations, tool-use workflows, and building high-reliability AI-powered web systems.',
       competencies: ['Claude API', 'Prompt Engineering', 'AI Architecture', 'Tool Use', 'Structured Output', 'LLM Security'],
-      credentialId: 'ANT-CLAUDE-84920-VERIFIED',
+      credentialId: '763614b5-7d85-487b-b574-b3a2226c0fd0',
       level: 'Certified Specialist',
       rating: 5.0,
       duration: '28 Hours',
@@ -1210,6 +1524,227 @@ module.exports = nextConfig;`,
     ? projects
     : projects.filter(p => p.category === projectFilter);
 
+  if (showGatewayScreen) {
+    return (
+      <div className="min-h-screen bg-[#060814] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden select-none font-sans">
+        {/* Animated glowing orbs in the background */}
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
+
+        {/* Outer Grid background mesh */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+
+        {/* Header Branding / Instructions */}
+        <div className="text-center mb-12 max-w-2xl relative z-10 animate-fadeIn">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-yellow text-xs font-bold uppercase tracking-wider mb-4 shadow-inner">
+            <Sparkles className="w-3.5 h-3.5 text-brand-yellow animate-pulse" />
+            <span>Khas Portals Gateway Dashboard</span>
+          </div>
+          <h1 className="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
+            Select Your Destination
+          </h1>
+          <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+            Card par click karke portal open karein, ya gear icon par click karke custom name, custom logo, aur custom redirect URL paste karein!
+          </p>
+        </div>
+
+        {/* 3 Sectors Grid exactly matching the uploaded screenshot */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl relative z-10 px-4">
+          {sectors.map((sector) => {
+            const isEditing = editingSectorId === sector.id;
+            
+            // Set up colors depending on theme
+            const themeColors = {
+              blue: {
+                border: 'hover:border-blue-500/50 hover:shadow-[0_15px_40px_rgba(59,130,246,0.15)]',
+                ring: 'ring-blue-500/20 bg-blue-950/20',
+                btn: 'bg-blue-600 hover:bg-blue-500 text-white',
+                glow: 'bg-blue-500/10',
+                text: 'text-blue-400',
+                borderCol: 'border-blue-500/30'
+              },
+              green: {
+                border: 'hover:border-emerald-500/50 hover:shadow-[0_15px_40px_rgba(16,185,129,0.15)]',
+                ring: 'ring-emerald-500/20 bg-emerald-950/20',
+                btn: 'bg-emerald-600 hover:bg-emerald-500 text-white',
+                glow: 'bg-emerald-500/10',
+                text: 'text-emerald-400',
+                borderCol: 'border-emerald-500/30'
+              },
+              orange: {
+                border: 'hover:border-orange-500/50 hover:shadow-[0_15px_40px_rgba(249,115,22,0.15)]',
+                ring: 'ring-orange-500/20 bg-orange-950/20',
+                btn: 'bg-orange-600 hover:bg-orange-500 text-white',
+                glow: 'bg-orange-500/10',
+                text: 'text-orange-400',
+                borderCol: 'border-orange-500/30'
+              }
+            }[sector.theme];
+
+            return (
+              <div
+                key={sector.id}
+                className={`relative rounded-3xl bg-[#0b0c16]/75 border border-zinc-800 p-8 flex flex-col items-center justify-between transition-all duration-300 min-h-[380px] ${themeColors.border} group overflow-hidden`}
+              >
+                {/* Back Glowing Shadow Orb */}
+                <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-2xl opacity-40 transition-opacity group-hover:opacity-60 ${themeColors.glow}`} />
+
+                {/* Edit Pencil / Settings Button in top right */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingSectorId(sector.id);
+                    setTempSectorName(sector.name);
+                    setTempSectorLogo(sector.logoUrl);
+                    setTempSectorUrl(sector.customUrl || '');
+                  }}
+                  className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/15 transition-all active:scale-90"
+                  title={`Edit ${sector.name} settings`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                </button>
+
+                {/* Inline Card Editor Form Overlay */}
+                {isEditing ? (
+                  <div className="absolute inset-0 bg-[#0d0f1f]/95 z-30 p-6 flex flex-col justify-between text-left animate-fadeIn border-2 border-brand-yellow rounded-3xl">
+                    <div className="space-y-3.5">
+                      <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                        <span className="text-xs font-mono font-bold text-brand-yellow uppercase">Edit Portal Card</span>
+                        <button 
+                          onClick={() => setEditingSectorId(null)}
+                          className="text-zinc-400 hover:text-white text-xs font-bold"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Name input */}
+                      <div>
+                        <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Portal Name</label>
+                        <input
+                          type="text"
+                          value={tempSectorName}
+                          onChange={(e) => setTempSectorName(e.target.value)}
+                          className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
+                          placeholder="e.g. KHAS SCHOOL SYSTEM"
+                        />
+                      </div>
+
+                      {/* Logo URL input */}
+                      <div>
+                        <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Logo Image URL</label>
+                        <input
+                          type="text"
+                          value={tempSectorLogo}
+                          onChange={(e) => setTempSectorLogo(e.target.value)}
+                          className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
+                          placeholder="e.g. https://i.pinimg.com/...jpg"
+                        />
+                      </div>
+
+                      {/* Custom Redirection URL input */}
+                      <div>
+                        <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Custom Redirect URL (URL Paste)</label>
+                        <input
+                          type="text"
+                          value={tempSectorUrl}
+                          onChange={(e) => setTempSectorUrl(e.target.value)}
+                          className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
+                          placeholder="e.g. https://custom-system-link.com"
+                        />
+                        <span className="text-[8px] text-brand-yellow/70 block mt-1 leading-normal font-sans">
+                          *Is card par click karte hi ye custom web link open hoga. Khaali chorne se portfolio open hoga!
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-3 border-t border-white/10 mt-3">
+                      <button
+                        onClick={() => setEditingSectorId(null)}
+                        className="px-3 py-2 bg-white/5 text-zinc-300 text-xs font-bold rounded-xl hover:bg-white/10 flex-1 text-center"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleSaveSectorBranding(sector.id, tempSectorName, tempSectorLogo, tempSectorUrl)}
+                        className="px-3 py-2 bg-brand-yellow text-brand-green font-extrabold text-xs rounded-xl hover:bg-white transition-all flex-1 text-center"
+                      >
+                        Save Settings
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Normal Card Layout matching User Screenshot */}
+                <div 
+                  onClick={() => {
+                    if (sector.customUrl) {
+                      window.open(sector.customUrl, '_blank', 'noopener,noreferrer');
+                    } else {
+                      triggerGatewayTransition(sector);
+                    }
+                  }}
+                  className="flex-1 flex flex-col items-center justify-center w-full cursor-pointer"
+                >
+                  {/* Central Emblem / Circular Logo */}
+                  <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center ring-4 ring-offset-4 ring-offset-[#0b0c16] ${themeColors.ring} shadow-xl transform transition-transform duration-500 group-hover:scale-105 overflow-hidden p-1`}>
+                    <SectorLogo 
+                      id={sector.id} 
+                      logoUrl={sector.logoUrl} 
+                      className="w-full h-full" 
+                    />
+                  </div>
+
+                  {/* Sector Name */}
+                  <h2 className="font-display font-black text-lg sm:text-xl text-white mt-8 tracking-wider text-center px-2 group-hover:text-brand-yellow transition-colors duration-200">
+                    {sector.name}
+                  </h2>
+
+                  {/* Redirection url indicator badge */}
+                  {sector.customUrl && (
+                    <div className="mt-2 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-mono text-zinc-400 font-medium tracking-wide flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
+                      <span>Redirect Link Active ↗</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Arrow Button at bottom */}
+                <button
+                  onClick={() => {
+                    if (sector.customUrl) {
+                      window.open(sector.customUrl, '_blank', 'noopener,noreferrer');
+                    } else {
+                      triggerGatewayTransition(sector);
+                    }
+                  }}
+                  className={`w-10 h-10 rounded-full border border-white/15 flex items-center justify-center shadow-lg transition-all duration-300 transform group-hover:scale-110 mt-6 shrink-0 ${themeColors.btn}`}
+                  title={sector.customUrl ? `Open redirect URL in new window` : `Enter ${sector.name} Portfolio`}
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer Link: Enter developer profile directly */}
+        <div className="mt-12 text-center relative z-10 animate-fadeIn delay-300">
+          <button
+            onClick={() => {
+              triggerGatewayTransition(null);
+            }}
+            className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-brand-yellow hover:border-brand-yellow font-extrabold text-xs uppercase tracking-wider rounded-full transition-all duration-300 shadow-md active:scale-95 flex items-center gap-2"
+          >
+            <span>Enter Developer Portfolio (Abdullah Web Dev)</span>
+            <span className="text-base">→</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-green-dark selection:bg-brand-yellow selection:text-brand-green-dark relative overflow-x-hidden">
       
@@ -1219,11 +1754,20 @@ module.exports = nextConfig;`,
           
           {/* Zone 1: Developer Brand Logo (< A >) */}
           <div 
-            onClick={() => scrollTo('home')} 
+            onClick={() => {
+              scrollTo('home');
+              setShowCustomizer(true);
+            }} 
             className="shrink-0 cursor-pointer"
-            aria-label="Abdullah Home"
+            aria-label={`${developerName} Home (Click to customize Logo & Name)`}
+            title="Click to customize Logo, Name, Designation & Photo!"
           >
-            <BrandLogo />
+            <BrandLogo 
+              activeSector={activeSector} 
+              customLogo={developerLogo}
+              customName={developerName}
+              customDesignation={developerDesignation}
+            />
           </div>
 
           {/* Zone 2: Navigation Links (4-6 links, clean text with active highlight, no static capsules) */}
@@ -1280,7 +1824,39 @@ module.exports = nextConfig;`,
           </nav>
 
           {/* Zone 3: Primary Actions (Single professional action button) */}
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-3 shrink-0">
+            <button 
+              onClick={() => setShowCustomizer(true)}
+              className="p-2.5 rounded-full bg-white/5 border border-white/10 text-brand-yellow hover:bg-brand-yellow hover:text-brand-green hover:border-brand-yellow transition-all duration-300 flex items-center justify-center shrink-0 active:scale-95 shadow-sm"
+              title="Customize Portfolio (Name, Logo, Designation & Photo)"
+            >
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </button>
+            <button 
+              onClick={() => {
+                localStorage.removeItem('khas_active_sector_id');
+                setActiveSector(null);
+                setShowGatewayScreen(true);
+              }}
+              className="px-4 py-2 text-xs font-bold text-white bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:border-brand-yellow/50 transition-all duration-300 uppercase tracking-wider shadow-sm flex items-center gap-1.5 active:scale-95 animate-pulse"
+              title="Return to Gateway Screen"
+            >
+              <span>🔄 Back to Gateway</span>
+            </button>
+            {activeSector && (
+              <>
+                <button
+                  onClick={() => {
+                    setTempSectors(sectors);
+                    setShowBrandingPanel(true);
+                  }}
+                  className="p-2 rounded-full bg-white/5 border border-white/10 text-white/80 hover:text-brand-yellow hover:border-brand-yellow transition-all duration-300"
+                  title="Customize Branding & Logos"
+                >
+                  <Sparkles className="w-4 h-4 text-brand-yellow" />
+                </button>
+              </>
+            )}
             <button 
               onClick={() => scrollTo('contact')}
               className="px-6 py-2.5 text-xs font-bold text-white bg-brand-green border border-transparent rounded-full hover:bg-brand-green-light hover:border-brand-yellow transition-all duration-300 uppercase tracking-wider shadow-md hover:shadow-lg active:scale-95"
@@ -1313,7 +1889,7 @@ module.exports = nextConfig;`,
                 </span>
               ))}
               <span className="inline-block">
-                {Array.from("Abdullah").map((char, index) => (
+                {Array.from(developerName).map((char, index) => (
                   <span 
                     key={`name-${index}`} 
                     className="inline-block transition-all duration-200 hover:text-brand-yellow cursor-default hover:scale-110 transform"
@@ -1332,7 +1908,7 @@ module.exports = nextConfig;`,
               ))}
               <br />
               <span className="inline-block animate-float text-brand-green">
-                Web Developer.
+                {developerDesignation}.
               </span>
             </h1>
             
@@ -1390,8 +1966,8 @@ module.exports = nextConfig;`,
               <div className="absolute inset-0 bg-white rounded-[40px] border-4 border-brand-green p-4 overflow-hidden shadow-2xl group flex flex-col justify-end cursor-pointer">
                 {/* Default Portrait Image */}
                 <img 
-                  src={HERO_IMAGE} 
-                  alt="Abdullah Professional Portrait" 
+                  src={developerHeroImage} 
+                  alt={`${developerName} Professional Portrait`} 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover rounded-[32px] transition-all duration-700 ease-in-out group-hover:opacity-0 group-hover:scale-105"
                   onError={(e) => {
@@ -1402,8 +1978,8 @@ module.exports = nextConfig;`,
                 
                 {/* Hover Portrait Image (Throne / Executive suit) */}
                 <img 
-                  src={HERO_HOVER_IMAGE} 
-                  alt="Abdullah Executive Portrait" 
+                  src={developerHeroImage} 
+                  alt={`${developerName} Executive Portrait`} 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover rounded-[32px] opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 group-hover:scale-105"
                   onError={(e) => {
@@ -1415,8 +1991,8 @@ module.exports = nextConfig;`,
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-green/90 to-brand-green-light/40 flex flex-col justify-between p-8 text-white -z-20">
                   <Award className="w-10 h-10 text-brand-yellow" />
                   <div>
-                    <h3 className="font-display text-2xl font-bold">Abdullah</h3>
-                    <p className="text-sm opacity-80">Full-Stack Web Developer</p>
+                    <h3 className="font-display text-2xl font-bold">{developerName}</h3>
+                    <p className="text-sm opacity-80">{developerDesignation}</p>
                   </div>
                 </div>
 
@@ -2109,10 +2685,24 @@ module.exports = nextConfig;`,
 
                   {/* Verified Pill Tag */}
                   <div className="mt-3">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-xs font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
-                      <span>{course.verifiedBadgeText}</span>
-                    </div>
+                    {course.verificationUrl ? (
+                      <a
+                        href={course.verificationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] hover:bg-[#d1fae5] border border-[#a7f3d0] text-[#047857] text-xs font-semibold transition-all duration-200 shadow-xs hover:shadow-sm group/pill"
+                        title="View official live badge on Claude Academy"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
+                        <span>{course.verifiedBadgeText}</span>
+                        <span className="text-[11px] font-bold transition-transform duration-200 group-hover/pill:translate-x-0.5">↗</span>
+                      </a>
+                    ) : (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-xs font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
+                        <span>{course.verifiedBadgeText}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Description Paragraph */}
@@ -2140,15 +2730,28 @@ module.exports = nextConfig;`,
                 </div>
 
                 {/* Bottom Action Button: Verify Official Badge */}
-                <div className="mt-6 pt-4 border-t border-brand-green/10">
-                  <button
-                    onClick={() => setSelectedCourse(course)}
-                    className="w-full py-3 px-4 bg-[#0e261d] hover:bg-[#163c2e] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn active:scale-98"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-[#4ade80]" />
-                    <span>Verify Official Badge</span>
-                    <span className="text-sm transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5">↗</span>
-                  </button>
+                <div className="mt-6 pt-4 border-t border-brand-green/10 flex flex-col gap-2">
+                  {course.verificationUrl ? (
+                    <a
+                      href={course.verificationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3.5 px-4 bg-gradient-to-r from-[#047857] via-[#065f46] to-[#022c22] hover:from-[#059669] hover:to-[#065f46] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group/btn active:scale-98 cursor-pointer text-center"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-[#4ade80]" />
+                      <span>View Verified Certificate & Badge</span>
+                      <span className="text-base transition-transform duration-200 group-hover/btn:translate-x-1">↗</span>
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => setSelectedCourse(course)}
+                      className="w-full py-3.5 px-4 bg-gradient-to-r from-[#047857] via-[#065f46] to-[#022c22] hover:from-[#059669] hover:to-[#065f46] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group/btn active:scale-98 cursor-pointer text-center"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-[#4ade80]" />
+                      <span>View Verified Certificate & Badge</span>
+                      <span className="text-base transition-transform duration-200 group-hover/btn:translate-x-1">→</span>
+                    </button>
+                  )}
                 </div>
 
               </div>
@@ -2534,7 +3137,12 @@ module.exports = nextConfig;`,
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           
           <div onClick={() => scrollTo('home')} className="cursor-pointer">
-            <BrandLogo dark />
+            <BrandLogo 
+              dark 
+              customLogo={developerLogo}
+              customName={developerName}
+              customDesignation={developerDesignation}
+            />
           </div>
 
           <div className="flex flex-wrap justify-center items-center gap-8 text-xs font-semibold text-white/60">
@@ -2548,7 +3156,7 @@ module.exports = nextConfig;`,
           </div>
 
           <div className="text-center md:text-right font-mono text-[11px] tracking-wide text-white/45">
-            © {new Date().getFullYear()} Abdullah. Made with extreme precision and pixel fidelity.
+            © {new Date().getFullYear()} {developerName}. Made with extreme precision and pixel fidelity.
           </div>
 
         </div>
@@ -3131,24 +3739,196 @@ module.exports = nextConfig;`,
             <div className="p-8 sm:p-10 space-y-6 text-left">
               
               {/* Verification Badge Status Box */}
-              <div className="bg-[#ecfdf5] border border-[#a7f3d0] rounded-2xl p-4 flex items-center justify-between gap-4">
+              <div className="bg-[#ecfdf5] border border-[#a7f3d0] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#10b981] text-white flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#10b981] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-xs text-[#065f46]">
+                    <h5 className="font-bold text-sm text-[#065f46]">
                       {selectedCourse.verifiedBadgeText}
                     </h5>
-                    <p className="text-[11px] text-[#047857]/80 font-mono">
+                    <p className="text-[11px] text-[#047857]/80 font-mono mt-0.5">
                       Cryptographic Verification Passed · Issue Status: Valid & Authentic
                     </p>
                   </div>
                 </div>
 
-                <span className="text-[11px] font-mono font-bold text-[#065f46] hidden sm:block">
-                  Verified by Abdullah
-                </span>
+                {selectedCourse.verificationUrl ? (
+                  <a
+                    href={selectedCourse.verificationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-[#047857] hover:bg-[#065f46] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 shrink-0"
+                  >
+                    <span>Official Badge</span>
+                    <span>↗</span>
+                  </a>
+                ) : (
+                  <span className="text-[11px] font-mono font-bold text-[#065f46] hidden sm:block">
+                    Verified by Abdullah
+                  </span>
+                )}
+              </div>
+
+              {/* Official Verified Certificate & Badge Document (No Sign-in Required) */}
+              <div className="relative rounded-3xl overflow-hidden border-2 border-brand-yellow/70 bg-gradient-to-b from-[#091f15] via-[#05140d] to-[#020b07] text-white p-6 sm:p-10 shadow-2xl space-y-6">
+                
+                {/* Decorative Certificate Inner Border */}
+                <div className="absolute inset-2 sm:inset-3 rounded-2xl border border-brand-yellow/30 pointer-events-none" />
+                <div className="absolute inset-3 sm:inset-4 rounded-xl border border-white/10 pointer-events-none" />
+
+                {/* Ambient Glows */}
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
+                
+                {/* Header: Organization & Credential Authority */}
+                <div className="relative text-center space-y-2 border-b border-white/10 pb-6">
+                  <div className="flex items-center justify-center gap-3">
+                    {/* Anthropic Coral Asterisk Symbol */}
+                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/15 flex items-center justify-center p-2 shadow-inner">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-[#d97757]">
+                        <path d="M12 2L14.5 9.5H22L16 14L18.5 21.5L12 17L5.5 21.5L8 14L2 9.5H9.5L12 2Z" fill="currentColor" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <h3 className="font-display font-extrabold text-base sm:text-lg tracking-wider text-white uppercase">
+                        Anthropic Claude Academy
+                      </h3>
+                      <p className="text-[10px] font-mono tracking-widest text-[#d97757] font-bold uppercase">
+                        Official Education & AI Developer Credentials
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <span className="inline-block px-4 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/40 text-brand-yellow text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase">
+                      Official Certificate of Achievement & Verified Badge
+                    </span>
+                  </div>
+                </div>
+
+                {/* Recipient & Achievement Declaration */}
+                <div className="relative text-center space-y-3 py-2">
+                  <p className="text-xs sm:text-sm font-sans text-white/70 tracking-wide">
+                    This certifies that
+                  </p>
+                  
+                  <div className="py-2">
+                    <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-yellow to-white drop-shadow-md">
+                      ABDULLAH
+                    </h2>
+                    <p className="text-xs font-mono text-brand-yellow/90 font-bold uppercase tracking-widest mt-1">
+                      Professional Web & AI Systems Developer
+                    </p>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-white/75 max-w-xl mx-auto leading-relaxed">
+                    Has successfully completed the comprehensive professional curriculum and verified full technical mastery for the credential:
+                  </p>
+
+                  <div className="py-3 px-6 bg-white/5 rounded-2xl border border-brand-yellow/40 max-w-lg mx-auto shadow-inner">
+                    <h4 className="font-display text-lg sm:text-xl font-extrabold text-white">
+                      Claude Certified Specialist — Developer Badge
+                    </h4>
+                  </div>
+                </div>
+
+                {/* Center Badge Medallion Showcase */}
+                <div className="relative flex flex-col items-center justify-center gap-3 py-2">
+                  <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-brand-yellow/80 shadow-2xl group">
+                    <img
+                      src={selectedCourse.badgeImage}
+                      alt="Official Claude Badge Medallion"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 ring-1 ring-inset ring-white/30 rounded-2xl pointer-events-none" />
+                  </div>
+                  
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10b981]/20 border border-[#10b981]/40 text-[#4ade80] text-xs font-mono font-bold">
+                    <CheckCircle2 className="w-4 h-4 text-[#4ade80]" />
+                    <span>Public Verification Active · 100% Valid</span>
+                  </div>
+                </div>
+
+                {/* Cryptographic Public Verification Grid */}
+                <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block">Official Credential ID</span>
+                    <span className="font-mono text-xs font-bold text-brand-yellow break-all block">{selectedCourse.credentialId}</span>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block">Issuer / Authority</span>
+                    <span className="font-sans text-xs font-bold text-white block">Anthropic Claude Academy (Official)</span>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block">Issue Year & Record</span>
+                    <span className="font-sans text-xs font-bold text-white block">2025 · Perpetual Developer Credential</span>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/50 block">Public Access Level</span>
+                    <span className="font-sans text-xs font-bold text-[#4ade80] block">Publicly Visible (No Sign-in Required)</span>
+                  </div>
+                </div>
+
+                {/* Verified Technical Competencies */}
+                <div className="relative bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-brand-yellow block">
+                    Verified Technical Competencies:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-white/80 font-sans">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#4ade80] font-bold">✓</span>
+                      <span>Claude API 3.5 Sonnet & Opus Integration</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#4ade80] font-bold">✓</span>
+                      <span>Advanced Prompt Engineering & System Prompts</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#4ade80] font-bold">✓</span>
+                      <span>Tool Use, Function Calling & Strict JSON Schemas</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#4ade80] font-bold">✓</span>
+                      <span>Constitutional AI Guardrails & Prompt Injection Security</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Public Verification Action Bar */}
+                <div className="relative pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <span className="text-[11px] font-mono text-white/50 text-center sm:text-left">
+                    Authentic verified public certificate record for Abdullah.
+                  </span>
+
+                  <div className="flex flex-wrap items-center justify-center gap-2 w-full sm:w-auto">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(selectedCourse.credentialId);
+                        setCopiedLink(true);
+                        setTimeout(() => setCopiedLink(false), 2500);
+                      }}
+                      className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-mono font-semibold transition-colors"
+                    >
+                      {copiedLink ? '✓ ID Copied!' : 'Copy Credential ID'}
+                    </button>
+                    {selectedCourse.verificationUrl && (
+                      <a
+                        href={selectedCourse.verificationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-[#d97757] hover:bg-[#c25e3e] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                      >
+                        <span>Open on Claude.com</span>
+                        <span>↗</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
               </div>
 
               {/* Official Credential Overview */}
@@ -3210,13 +3990,25 @@ module.exports = nextConfig;`,
                   Credential ID: <span className="font-bold text-brand-green">{selectedCourse.credentialId}</span>
                 </div>
 
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                   <button
                     onClick={() => setSelectedCourse(null)}
                     className="flex-1 sm:flex-none px-5 py-3 border border-brand-green/20 rounded-xl text-xs font-bold text-brand-green hover:bg-brand-green/5 transition-colors"
                   >
                     Close
                   </button>
+
+                  {selectedCourse.verificationUrl && (
+                    <a
+                      href={selectedCourse.verificationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 sm:flex-none px-6 py-3 bg-[#047857] hover:bg-[#065f46] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-[#4ade80]" />
+                      <span>View Live Badge ↗</span>
+                    </a>
+                  )}
 
                   <a
                     href={`https://wa.me/923019249721?text=${encodeURIComponent(`Hi Abdullah, I am inquiring about your certified credential: ${selectedCourse.title} (${selectedCourse.credentialId})`)}`}
@@ -3225,9 +4017,271 @@ module.exports = nextConfig;`,
                     className="flex-1 sm:flex-none px-6 py-3 bg-[#0e261d] hover:bg-brand-green text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <ShieldCheck className="w-4 h-4 text-[#4ade80]" />
-                    <span>Inquire / Verify on WhatsApp</span>
+                    <span>Inquire on WhatsApp</span>
                   </a>
                 </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- CINEMATIC ENTRY TRANSITION OVERLAY ----------------- */}
+      {isTransitionActive && (
+        <div className="fixed inset-0 z-55 flex flex-col items-center justify-center bg-black overflow-hidden select-none font-sans">
+          
+          {/* Main Warrior Graphic with Slow Cinematic Zoom-In */}
+          <div className="absolute inset-0 w-full h-full animate-cinematicZoom opacity-90">
+            <img 
+              src="/assets/images/gate_transition_warrior.jpg" 
+              alt="Entering Portal Warrior" 
+              className="w-full h-full object-cover object-center filter brightness-[0.45] contrast-[1.1]"
+            />
+          </div>
+
+          {/* Golden Flash Shader Overlay (Expanding Flare) */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-brand-yellow/15 via-transparent to-black/90 pointer-events-none mix-blend-screen z-10 animate-pulse" />
+
+          {/* Floating magical particles/debris layer */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_60%)] pointer-events-none" />
+
+          {/* Floating dust container */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+            {Array.from({ length: 24 }).map((_, idx) => {
+              const delay = idx * 0.15;
+              const size = Math.random() * 4 + 2;
+              const left = Math.random() * 100;
+              const top = Math.random() * 100;
+              return (
+                <div 
+                  key={idx}
+                  className="absolute bg-brand-yellow/45 rounded-full animate-floatUp"
+                  style={{
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    left: `${left}%`,
+                    top: `${top}%`,
+                    animationDelay: `${delay}s`,
+                    animationDuration: `${Math.random() * 5 + 3}s`
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Content Overlays */}
+          <div className="relative z-30 text-center flex flex-col items-center max-w-lg px-6">
+            
+            {/* Spinning Golden Compass Ring */}
+            <div className="relative mb-8 w-24 h-24 rounded-full border-2 border-brand-yellow/40 flex items-center justify-center p-3 animate-spinSlow shadow-lg shadow-brand-yellow/20 bg-black/40 backdrop-blur-xs">
+              <div className="w-full h-full rounded-full border border-dashed border-brand-yellow flex items-center justify-center">
+                <Flame className="w-8 h-8 text-brand-yellow animate-bounce" />
+              </div>
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-brand-yellow rounded-full animate-ping" />
+            </div>
+
+            {/* Portal Entering Subtitle */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 border border-brand-yellow/30 text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-brand-yellow mb-3 shadow-2xl animate-pulse">
+              <span>UNLEASHING MAGICAL ENERGY</span>
+            </div>
+
+            {/* Main Destination Text */}
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold uppercase tracking-[0.1em] text-white leading-tight animate-pulse balance drop-shadow-lg">
+              {isEnteringDeveloper ? (
+                <span>Entering Personal Portfolio</span>
+              ) : (
+                <span>Entering {transitionPendingSector?.name || 'Portal'}</span>
+              )}
+            </h2>
+
+            <p className="text-[10px] font-mono text-zinc-400 mt-4 uppercase tracking-[0.3em]">
+              Please hold while the portal opens...
+            </p>
+
+            {/* Cinematic Progress Bar */}
+            <div className="mt-8 w-64 h-1.5 bg-white/5 border border-white/10 rounded-full overflow-hidden p-0.5 relative">
+              <div className="h-full bg-gradient-to-r from-brand-yellow/60 via-brand-yellow to-white rounded-full animate-transitionBar" />
+            </div>
+
+          </div>
+
+          {/* Post-transition Final Blackout Fade */}
+          <div className="absolute inset-0 bg-black opacity-0 z-40 pointer-events-none animate-finalFade" />
+
+        </div>
+      )}
+
+      {/* ----------------- BRANDING & PERSONALIZATION CONTROL CENTER MODAL ----------------- */}
+      {showCustomizer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-green-dark/85 backdrop-blur-md overflow-y-auto">
+          <div className="bg-white rounded-[32px] max-w-lg w-full shadow-2xl relative border-2 border-brand-yellow animate-fadeIn p-6 sm:p-8 max-h-[95vh] overflow-y-auto">
+            
+            <button 
+              onClick={() => {
+                localStorage.setItem('portfolio_has_customized_v1', 'true');
+                setShowCustomizer(false);
+              }}
+              className="absolute top-6 right-6 w-9 h-9 rounded-full bg-brand-bg border border-brand-green/10 flex items-center justify-center text-brand-green hover:bg-brand-green hover:text-white transition-colors duration-200"
+              title="Close Panel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Title Block */}
+            <div className="text-left mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/20 border border-brand-yellow/30 text-brand-green text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                <Sparkles className="w-3 h-3 text-brand-yellow animate-pulse" />
+                <span>Portfolio Customization Control Center</span>
+              </div>
+              <h3 className="font-display text-2xl font-extrabold text-brand-green leading-snug">
+                Personalize Your Portfolio!
+              </h3>
+              <p className="text-xs text-brand-green-light/75 mt-1 font-sans leading-relaxed">
+                Apna Name, Designation (subtitle), Logo, aur Main Photo (Hero image) direct change karein. Sab kuch 100% save rahega!
+              </p>
+            </div>
+
+            {/* Editor Fields */}
+            <div className="space-y-5 text-left">
+              
+              {/* 1. Developer Name */}
+              <div>
+                <label className="block text-[10px] font-extrabold text-brand-green uppercase tracking-wider mb-1.5">
+                  Your Full Name / Brand Name
+                </label>
+                <input 
+                  type="text" 
+                  value={developerName}
+                  onChange={(e) => {
+                    setDeveloperName(e.target.value);
+                    localStorage.setItem('portfolio_developer_name', e.target.value);
+                  }}
+                  className="w-full px-4 py-2.5 bg-brand-bg rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green transition-all" 
+                  placeholder="e.g. Abdullah" 
+                />
+              </div>
+
+              {/* 2. Designation */}
+              <div>
+                <label className="block text-[10px] font-extrabold text-brand-green uppercase tracking-wider mb-1.5">
+                  Your Subtitle / Designation
+                </label>
+                <input 
+                  type="text" 
+                  value={developerDesignation}
+                  onChange={(e) => {
+                    setDeveloperDesignation(e.target.value);
+                    localStorage.setItem('portfolio_developer_designation', e.target.value);
+                  }}
+                  className="w-full px-4 py-2.5 bg-brand-bg rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green transition-all" 
+                  placeholder="e.g. Web Developer" 
+                />
+              </div>
+
+              {/* 3. Brand Logo Customization */}
+              <div className="p-4 bg-brand-bg rounded-2xl border border-brand-green/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold text-brand-green uppercase tracking-wider">
+                    Navbar & Footer Logo Image
+                  </span>
+                  
+                  {/* Miniature Preview */}
+                  <div className="w-8 h-8 rounded-lg border border-brand-yellow/50 overflow-hidden bg-brand-green-dark flex items-center justify-center">
+                    <img src={developerLogo} alt="Logo preview" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+
+                {/* File Uploader */}
+                <div>
+                  <span className="block text-[9px] text-brand-green-light/70 mb-1">Option A: Upload Image File (Under 2MB)</span>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="w-full text-xs text-brand-green-light/80 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase file:bg-brand-green file:text-white hover:file:bg-brand-green-light cursor-pointer"
+                  />
+                </div>
+
+                {/* URL Paste */}
+                <div>
+                  <span className="block text-[9px] text-brand-green-light/70 mb-1">Option B: Paste Image URL</span>
+                  <input 
+                    type="text" 
+                    value={developerLogo.startsWith('data:') ? '' : developerLogo}
+                    onChange={(e) => {
+                      if (e.target.value.trim()) {
+                        setDeveloperLogo(e.target.value.trim());
+                        localStorage.setItem('portfolio_developer_logo', e.target.value.trim());
+                      }
+                    }}
+                    className="w-full px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none" 
+                    placeholder="e.g. https://i.pinimg.com/...jpg" 
+                  />
+                </div>
+              </div>
+
+              {/* 4. Hero Column Image Customization */}
+              <div className="p-4 bg-brand-bg rounded-2xl border border-brand-green/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold text-brand-green uppercase tracking-wider">
+                    Main Hero Portrait Photo
+                  </span>
+                  
+                  {/* Miniature Preview */}
+                  <div className="w-8 h-10 rounded-lg border border-brand-yellow/50 overflow-hidden bg-brand-green-dark flex items-center justify-center">
+                    <img src={developerHeroImage} alt="Hero portrait preview" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+
+                {/* File Uploader */}
+                <div>
+                  <span className="block text-[9px] text-brand-green-light/70 mb-1">Option A: Upload Photo File (Under 2MB)</span>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleHeroUpload}
+                    className="w-full text-xs text-brand-green-light/80 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase file:bg-brand-green file:text-white hover:file:bg-brand-green-light cursor-pointer"
+                  />
+                </div>
+
+                {/* URL Paste */}
+                <div>
+                  <span className="block text-[9px] text-brand-green-light/70 mb-1">Option B: Paste Image URL</span>
+                  <input 
+                    type="text" 
+                    value={developerHeroImage.startsWith('data:') ? '' : developerHeroImage}
+                    onChange={(e) => {
+                      if (e.target.value.trim()) {
+                        setDeveloperHeroImage(e.target.value.trim());
+                        localStorage.setItem('portfolio_developer_hero_image', e.target.value.trim());
+                      }
+                    }}
+                    className="w-full px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none" 
+                    placeholder="e.g. https://i.pinimg.com/...jpg" 
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-brand-green/10 flex items-center gap-3">
+                <button
+                  onClick={handleResetCustomizer}
+                  className="px-4 py-3 border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer text-center"
+                >
+                  Reset To Default
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.setItem('portfolio_has_customized_v1', 'true');
+                    setShowCustomizer(false);
+                    alert("Portfolio personalized successfully!");
+                  }}
+                  className="flex-1 py-3 bg-brand-green hover:bg-brand-green-light text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
+                >
+                  Done / Save Changes
+                </button>
               </div>
 
             </div>
