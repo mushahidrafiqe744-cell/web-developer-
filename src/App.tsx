@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import defaultBranding from './config/branding.json';
 import {
   Github,
   Linkedin,
@@ -41,9 +42,9 @@ import {
 // Hero image paths
 const HERO_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const HERO_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
-// Brand logo image path (Silver Wings Emblem)
-const BRAND_LOGO_IMAGE = '/assets/images/wings_brand_logo.jpg';
-const BRAND_LOGO_FALLBACK = '/assets/images/wings_brand_logo_1791287049503.jpg';
+// Brand logo image path (Silver Wings Emblem / Custom King Emblem)
+const BRAND_LOGO_IMAGE = 'https://i.pinimg.com/736x/7a/5d/4a/7a5d4aa1758f0255711c70a2cd15b989.jpg';
+const BRAND_LOGO_FALLBACK = '/assets/images/wings_brand_logo.jpg';
 // About image path
 const ABOUT_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
@@ -158,20 +159,20 @@ interface SectorBranding {
   customUrl?: string;
 }
 
-const DEFAULT_SECTORS: SectorBranding[] = [
+const DEFAULT_SECTORS: SectorBranding[] = (defaultBranding.sectors || [
   {
     id: 'school',
-    name: 'KHAS SCHOOL SYSTEM',
-    logoUrl: '',
+    name: 'King',
+    logoUrl: 'https://i.pinimg.com/736x/7a/5d/4a/7a5d4aa1758f0255711c70a2cd15b989.jpg',
     theme: 'blue',
     customUrl: ''
   },
   {
     id: 'academy',
-    name: 'KHAS ACADEMY',
-    logoUrl: '',
+    name: 'WEB DEVELOPER ACADEMY',
+    logoUrl: 'https://i.pinimg.com/736x/ab/c2/a1/abc2a1813717930f2717478d77579373.jpg',
     theme: 'green',
-    customUrl: ''
+    customUrl: 'https://web-develpor-lgdu.vercel.app/'
   },
   {
     id: 'it',
@@ -180,7 +181,7 @@ const DEFAULT_SECTORS: SectorBranding[] = [
     theme: 'orange',
     customUrl: ''
   }
-];
+]) as SectorBranding[];
 
 function SectorLogo({ id, logoUrl, className = "w-11 h-11" }: { id: string; logoUrl?: string; className?: string }) {
   const [imgError, setImgError] = React.useState(false);
@@ -290,9 +291,9 @@ function BrandLogo({
   customName?: string;
   customDesignation?: string;
 }) {
-  const logoSrc = customLogo || BRAND_LOGO_IMAGE;
-  const nameText = customName || 'Abdullah';
-  const designationText = customDesignation || 'Web Developer';
+  const logoSrc = customLogo || defaultBranding.developerLogo || BRAND_LOGO_IMAGE;
+  const nameText = customName || defaultBranding.developerName || 'King';
+  const designationText = customDesignation || defaultBranding.developerDesignation || 'Web Developer';
 
   if (activeSector) {
     return (
@@ -409,7 +410,19 @@ export default function App() {
     const saved = localStorage.getItem('khas_sectors_branding');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((p: SectorBranding) => {
+            const def = DEFAULT_SECTORS.find(d => d.id === p.id);
+            if (def && p.id === 'school' && (!p.logoUrl || p.name === 'KHAS SCHOOL SYSTEM')) {
+              return { ...p, name: def.name, logoUrl: def.logoUrl };
+            }
+            if (def && p.id === 'academy' && (!p.logoUrl || p.name === 'KHAS ACADEMY' || !p.customUrl)) {
+              return { ...p, name: def.name, logoUrl: def.logoUrl, customUrl: def.customUrl };
+            }
+            return p;
+          });
+        }
       } catch (e) {}
     }
     return DEFAULT_SECTORS;
@@ -449,11 +462,15 @@ export default function App() {
     setIsTransitionActive(true);
     setIsEnteringDeveloper(sector === null);
 
-    // Play cinematic animation for 3.2 seconds, then enter portfolio
+    // Play cinematic animation for 3.2 seconds, then enter portfolio or redirect to customUrl
     setTimeout(() => {
       if (sector) {
         localStorage.setItem('khas_active_sector_id', sector.id);
         setActiveSector(sector);
+        if (sector.customUrl && (sector.customUrl.startsWith('http://') || sector.customUrl.startsWith('https://'))) {
+          window.location.href = sector.customUrl;
+          return;
+        }
       } else {
         localStorage.removeItem('khas_active_sector_id');
         setActiveSector(null);
@@ -465,20 +482,25 @@ export default function App() {
 
   // Dynamic Portfolio Customizer States
   const [developerName, setDeveloperName] = useState(() => {
-    return localStorage.getItem('portfolio_developer_name') || 'Abdullah';
+    const saved = localStorage.getItem('portfolio_developer_name');
+    if (saved && saved !== 'Abdullah') return saved;
+    return defaultBranding.developerName || 'King';
   });
   const [developerDesignation, setDeveloperDesignation] = useState(() => {
-    return localStorage.getItem('portfolio_developer_designation') || 'Web Developer';
+    return localStorage.getItem('portfolio_developer_designation') || defaultBranding.developerDesignation || 'Web Developer';
   });
   const [developerLogo, setDeveloperLogo] = useState(() => {
-    return localStorage.getItem('portfolio_developer_logo') || BRAND_LOGO_IMAGE;
+    const saved = localStorage.getItem('portfolio_developer_logo');
+    if (saved && saved !== '/assets/images/wings_brand_logo.jpg') return saved;
+    return defaultBranding.developerLogo || BRAND_LOGO_IMAGE;
   });
   const [developerHeroImage, setDeveloperHeroImage] = useState(() => {
-    return localStorage.getItem('portfolio_developer_hero_image') || HERO_IMAGE;
+    return localStorage.getItem('portfolio_developer_hero_image') || defaultBranding.developerHeroImage || HERO_IMAGE;
   });
   const [showCustomizer, setShowCustomizer] = useState(() => {
     return localStorage.getItem('portfolio_has_customized_v1') !== 'true';
   });
+  const [showVercelCodeModal, setShowVercelCodeModal] = useState(false);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -515,15 +537,17 @@ export default function App() {
   };
 
   const handleResetCustomizer = () => {
-    if (window.confirm("Are you sure you want to reset your portfolio settings back to default Abdullah branding?")) {
-      setDeveloperName('Abdullah');
-      setDeveloperDesignation('Web Developer');
-      setDeveloperLogo(BRAND_LOGO_IMAGE);
-      setDeveloperHeroImage(HERO_IMAGE);
+    if (window.confirm("Are you sure you want to reset your portfolio settings back to default King branding?")) {
+      setDeveloperName(defaultBranding.developerName || 'King');
+      setDeveloperDesignation(defaultBranding.developerDesignation || 'Web Developer');
+      setDeveloperLogo(defaultBranding.developerLogo || BRAND_LOGO_IMAGE);
+      setDeveloperHeroImage(defaultBranding.developerHeroImage || HERO_IMAGE);
       localStorage.removeItem('portfolio_developer_name');
       localStorage.removeItem('portfolio_developer_designation');
       localStorage.removeItem('portfolio_developer_logo');
       localStorage.removeItem('portfolio_developer_hero_image');
+      localStorage.removeItem('khas_sectors_branding');
+      setSectors(DEFAULT_SECTORS);
       localStorage.setItem('portfolio_has_customized_v1', 'true');
       setShowCustomizer(false);
     }
@@ -1633,26 +1657,87 @@ module.exports = nextConfig;`,
 
                       {/* Logo URL input */}
                       <div>
-                        <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Logo Image URL</label>
-                        <input
-                          type="text"
-                          value={tempSectorLogo}
-                          onChange={(e) => setTempSectorLogo(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
-                          placeholder="e.g. https://i.pinimg.com/...jpg"
-                        />
+                        <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Logo Image (Upload File or Paste URL)</label>
+                        <div className="space-y-1.5">
+                          <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 2 * 1024 * 1024) {
+                                  alert("Image is too large. Under 2MB select karein.");
+                                  return;
+                                }
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                  setTempSectorLogo(reader.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                            className="w-full text-[9px] text-zinc-400 file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[9px] file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={tempSectorLogo.startsWith('data:') ? '' : tempSectorLogo}
+                              onChange={(e) => setTempSectorLogo(e.target.value)}
+                              className="flex-1 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
+                              placeholder="e.g. Paste URL or select file"
+                            />
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                try {
+                                  const text = await navigator.clipboard.readText();
+                                  if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                                    setTempSectorLogo(text.trim());
+                                  } else {
+                                    alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                                  }
+                                } catch (err) {
+                                  alert("Manual paste (Ctrl+V) karein.");
+                                }
+                              }}
+                              className="px-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-[9px] font-bold text-zinc-300 transition-colors cursor-pointer"
+                            >
+                              Paste
+                            </button>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Custom Redirection URL input */}
                       <div>
                         <label className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wide mb-1">Custom Redirect URL (URL Paste)</label>
-                        <input
-                          type="text"
-                          value={tempSectorUrl}
-                          onChange={(e) => setTempSectorUrl(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
-                          placeholder="e.g. https://custom-system-link.com"
-                        />
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={tempSectorUrl}
+                            onChange={(e) => setTempSectorUrl(e.target.value)}
+                            className="flex-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-semibold outline-none focus:border-brand-yellow transition-all"
+                            placeholder="e.g. https://custom-system-link.com"
+                          />
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                const text = await navigator.clipboard.readText();
+                                if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                                  setTempSectorUrl(text.trim());
+                                } else {
+                                  alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                                }
+                              } catch (err) {
+                                alert("Manual paste (Ctrl+V) karein.");
+                              }
+                            }}
+                            className="px-2.5 bg-white/10 hover:bg-white/20 rounded-lg text-[9px] font-bold text-zinc-300 transition-colors cursor-pointer"
+                          >
+                            Paste
+                          </button>
+                        </div>
                         <span className="text-[8px] text-brand-yellow/70 block mt-1 leading-normal font-sans">
                           *Is card par click karte hi ye custom web link open hoga. Khaali chorne se portfolio open hoga!
                         </span>
@@ -1679,11 +1764,7 @@ module.exports = nextConfig;`,
                 {/* Normal Card Layout matching User Screenshot */}
                 <div 
                   onClick={() => {
-                    if (sector.customUrl) {
-                      window.open(sector.customUrl, '_blank', 'noopener,noreferrer');
-                    } else {
-                      triggerGatewayTransition(sector);
-                    }
+                    triggerGatewayTransition(sector);
                   }}
                   className="flex-1 flex flex-col items-center justify-center w-full cursor-pointer"
                 >
@@ -1705,7 +1786,7 @@ module.exports = nextConfig;`,
                   {sector.customUrl && (
                     <div className="mt-2 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-mono text-zinc-400 font-medium tracking-wide flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
-                      <span>Redirect Link Active ↗</span>
+                      <span>Redirect Link Configured ↗</span>
                     </div>
                   )}
                 </div>
@@ -1713,14 +1794,10 @@ module.exports = nextConfig;`,
                 {/* Arrow Button at bottom */}
                 <button
                   onClick={() => {
-                    if (sector.customUrl) {
-                      window.open(sector.customUrl, '_blank', 'noopener,noreferrer');
-                    } else {
-                      triggerGatewayTransition(sector);
-                    }
+                    triggerGatewayTransition(sector);
                   }}
                   className={`w-10 h-10 rounded-full border border-white/15 flex items-center justify-center shadow-lg transition-all duration-300 transform group-hover:scale-110 mt-6 shrink-0 ${themeColors.btn}`}
-                  title={sector.customUrl ? `Open redirect URL in new window` : `Enter ${sector.name} Portfolio`}
+                  title={`Enter ${sector.name} Portfolio`}
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -1737,13 +1814,20 @@ module.exports = nextConfig;`,
             }}
             className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-brand-yellow hover:border-brand-yellow font-extrabold text-xs uppercase tracking-wider rounded-full transition-all duration-300 shadow-md active:scale-95 flex items-center gap-2"
           >
-            <span>Enter Developer Portfolio (Abdullah Web Dev)</span>
+            <span>Enter Developer Portfolio ({developerName} Web Dev)</span>
             <span className="text-base">→</span>
           </button>
         </div>
       </div>
     );
   }
+
+  const currentName = activeSector ? activeSector.name : developerName;
+  const currentDesignation = activeSector 
+    ? (activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'IT & Software Agency') 
+    : developerDesignation;
+  const currentLogo = activeSector ? activeSector.logoUrl : developerLogo;
+  const currentHeroImage = activeSector ? (activeSector.logoUrl || developerHeroImage) : developerHeroImage;
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-green-dark selection:bg-brand-yellow selection:text-brand-green-dark relative overflow-x-hidden">
@@ -1889,7 +1973,7 @@ module.exports = nextConfig;`,
                 </span>
               ))}
               <span className="inline-block">
-                {Array.from(developerName).map((char, index) => (
+                {Array.from(currentName).map((char, index) => (
                   <span 
                     key={`name-${index}`} 
                     className="inline-block transition-all duration-200 hover:text-brand-yellow cursor-default hover:scale-110 transform"
@@ -1908,7 +1992,7 @@ module.exports = nextConfig;`,
               ))}
               <br />
               <span className="inline-block animate-float text-brand-green">
-                {developerDesignation}.
+                {currentDesignation}.
               </span>
             </h1>
             
@@ -1926,6 +2010,19 @@ module.exports = nextConfig;`,
                   <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </button>
+
+              {activeSector?.customUrl && (
+                <a 
+                  href={activeSector.customUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 bg-brand-yellow hover:bg-brand-yellow-hover text-brand-green font-extrabold rounded-full transition-all duration-300 text-center flex items-center justify-center gap-2 shadow-lg animate-pulse hover:animate-none"
+                  title={`Open configured link: ${activeSector.customUrl}`}
+                >
+                  <span>🌐 Visit Official Portal</span>
+                  <ExternalLink className="w-4 h-4 text-brand-green" />
+                </a>
+              )}
               
               <button 
                 onClick={() => setShowHireModal(true)}
@@ -1966,8 +2063,8 @@ module.exports = nextConfig;`,
               <div className="absolute inset-0 bg-white rounded-[40px] border-4 border-brand-green p-4 overflow-hidden shadow-2xl group flex flex-col justify-end cursor-pointer">
                 {/* Default Portrait Image */}
                 <img 
-                  src={developerHeroImage} 
-                  alt={`${developerName} Professional Portrait`} 
+                  src={currentHeroImage} 
+                  alt={`${currentName} Professional Portrait`} 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover rounded-[32px] transition-all duration-700 ease-in-out group-hover:opacity-0 group-hover:scale-105"
                   onError={(e) => {
@@ -1978,8 +2075,8 @@ module.exports = nextConfig;`,
                 
                 {/* Hover Portrait Image (Throne / Executive suit) */}
                 <img 
-                  src={developerHeroImage} 
-                  alt={`${developerName} Executive Portrait`} 
+                  src={currentHeroImage} 
+                  alt={`${currentName} Executive Portrait`} 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover rounded-[32px] opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 group-hover:scale-105"
                   onError={(e) => {
@@ -1991,8 +2088,8 @@ module.exports = nextConfig;`,
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-green/90 to-brand-green-light/40 flex flex-col justify-between p-8 text-white -z-20">
                   <Award className="w-10 h-10 text-brand-yellow" />
                   <div>
-                    <h3 className="font-display text-2xl font-bold">{developerName}</h3>
-                    <p className="text-sm opacity-80">{developerDesignation}</p>
+                    <h3 className="font-display text-2xl font-bold">{currentName}</h3>
+                    <p className="text-sm opacity-80">{currentDesignation}</p>
                   </div>
                 </div>
 
@@ -2168,7 +2265,7 @@ module.exports = nextConfig;`,
 
               {/* Headline */}
               <h2 className="font-display text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-none mb-3">
-                I'm <span className="text-[#f3b01c]">Abdullah!</span>
+                I'm <span className="text-[#f3b01c]">{currentName}!</span>
               </h2>
 
               {/* Accent Underline */}
@@ -3139,6 +3236,7 @@ module.exports = nextConfig;`,
           <div onClick={() => scrollTo('home')} className="cursor-pointer">
             <BrandLogo 
               dark 
+              activeSector={activeSector}
               customLogo={developerLogo}
               customName={developerName}
               customDesignation={developerDesignation}
@@ -3156,7 +3254,7 @@ module.exports = nextConfig;`,
           </div>
 
           <div className="text-center md:text-right font-mono text-[11px] tracking-wide text-white/45">
-            © {new Date().getFullYear()} {developerName}. Made with extreme precision and pixel fidelity.
+            © {new Date().getFullYear()} {currentName}. Made with extreme precision and pixel fidelity.
           </div>
 
         </div>
@@ -4146,6 +4244,132 @@ module.exports = nextConfig;`,
             {/* Editor Fields */}
             <div className="space-y-5 text-left">
               
+              {/* If in Active Sector mode, allow customizing Sector details */}
+              {activeSector && (
+                <div className="p-4 bg-brand-yellow/10 rounded-2xl border-2 border-brand-yellow space-y-4 mb-4">
+                  <div className="flex items-center gap-2 pb-1.5 border-b border-brand-yellow/20">
+                    <Sparkles className="w-4 h-4 text-brand-yellow animate-bounce" />
+                    <span className="text-[11px] font-bold text-brand-green uppercase tracking-wide">
+                      Active Portal Settings ({activeSector.name})
+                    </span>
+                  </div>
+
+                  {/* Sector Name */}
+                  <div>
+                    <label className="block text-[9px] font-extrabold text-brand-green uppercase tracking-wider mb-1">
+                      Portal Name (e.g. KHAS SCHOOL SYSTEM)
+                    </label>
+                    <input 
+                      type="text" 
+                      value={activeSector.name}
+                      onChange={(e) => {
+                        const updatedName = e.target.value;
+                        const updatedSector = { ...activeSector, name: updatedName };
+                        setActiveSector(updatedSector);
+                        const updatedSectors = sectors.map(s => s.id === activeSector.id ? updatedSector : s);
+                        setSectors(updatedSectors);
+                        localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+                      }}
+                      className="w-full px-3 py-2 bg-white rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-yellow transition-all" 
+                      placeholder="e.g. KHAS SCHOOL SYSTEM" 
+                    />
+                  </div>
+
+                  {/* Sector Custom Redirect URL */}
+                  <div>
+                    <label className="block text-[9px] font-extrabold text-brand-green uppercase tracking-wider mb-1">
+                      Portal Redirect Link (URL Paste)
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={activeSector.customUrl || ''}
+                        onChange={(e) => {
+                          const updatedUrl = e.target.value;
+                          const updatedSector = { ...activeSector, customUrl: updatedUrl };
+                          setActiveSector(updatedSector);
+                          const updatedSectors = sectors.map(s => s.id === activeSector.id ? updatedSector : s);
+                          setSectors(updatedSectors);
+                          localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+                        }}
+                        className="flex-1 px-3 py-2 bg-white rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-yellow transition-all" 
+                        placeholder="e.g. https://khas-school.com" 
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const text = await navigator.clipboard.readText();
+                            if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                              const updatedSector = { ...activeSector, customUrl: text.trim() };
+                              setActiveSector(updatedSector);
+                              const updatedSectors = sectors.map(s => s.id === activeSector.id ? updatedSector : s);
+                              setSectors(updatedSectors);
+                              localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+                            } else {
+                              alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                            }
+                          } catch (err) {
+                            alert("Manual paste (Ctrl+V) karein.");
+                          }
+                        }}
+                        className="px-2.5 bg-brand-green text-white hover:bg-brand-green-light rounded-xl text-[10px] font-bold transition-colors cursor-pointer"
+                      >
+                        Paste 📋
+                      </button>
+                    </div>
+                    <span className="text-[8px] text-brand-green-light/70 mt-1 block">
+                      *Yahan apna redirect website link paste karein. Portfolio me automatic button show hoga!
+                    </span>
+                  </div>
+
+                  {/* Sector Logo customizer */}
+                  <div>
+                    <label className="block text-[9px] font-extrabold text-brand-green uppercase tracking-wider mb-1">
+                      Portal Logo Image (URL Paste)
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={activeSector.logoUrl || ''}
+                        onChange={(e) => {
+                          const updatedLogo = e.target.value;
+                          const updatedSector = { ...activeSector, logoUrl: updatedLogo };
+                          setActiveSector(updatedSector);
+                          const updatedSectors = sectors.map(s => s.id === activeSector.id ? updatedSector : s);
+                          setSectors(updatedSectors);
+                          localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+                        }}
+                        className="flex-1 px-3 py-2 bg-white rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-yellow transition-all" 
+                        placeholder="e.g. https://i.pinimg.com/...jpg" 
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const text = await navigator.clipboard.readText();
+                            if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                              const updatedSector = { ...activeSector, logoUrl: text.trim() };
+                              setActiveSector(updatedSector);
+                              const updatedSectors = sectors.map(s => s.id === activeSector.id ? updatedSector : s);
+                              setSectors(updatedSectors);
+                              localStorage.setItem('khas_sectors_branding', JSON.stringify(updatedSectors));
+                            } else {
+                              alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                            }
+                          } catch (err) {
+                            alert("Manual paste (Ctrl+V) karein.");
+                          }
+                        }}
+                        className="px-2.5 bg-brand-green text-white hover:bg-brand-green-light rounded-xl text-[10px] font-bold transition-colors cursor-pointer"
+                      >
+                        Paste 📋
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* 1. Developer Name */}
               <div>
                 <label className="block text-[10px] font-extrabold text-brand-green uppercase tracking-wider mb-1.5">
@@ -4159,7 +4383,7 @@ module.exports = nextConfig;`,
                     localStorage.setItem('portfolio_developer_name', e.target.value);
                   }}
                   className="w-full px-4 py-2.5 bg-brand-bg rounded-xl border border-brand-green/15 text-xs font-semibold text-brand-green-dark outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green transition-all" 
-                  placeholder="e.g. Abdullah" 
+                  placeholder="e.g. King" 
                 />
               </div>
 
@@ -4207,18 +4431,39 @@ module.exports = nextConfig;`,
                 {/* URL Paste */}
                 <div>
                   <span className="block text-[9px] text-brand-green-light/70 mb-1">Option B: Paste Image URL</span>
-                  <input 
-                    type="text" 
-                    value={developerLogo.startsWith('data:') ? '' : developerLogo}
-                    onChange={(e) => {
-                      if (e.target.value.trim()) {
-                        setDeveloperLogo(e.target.value.trim());
-                        localStorage.setItem('portfolio_developer_logo', e.target.value.trim());
-                      }
-                    }}
-                    className="w-full px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none" 
-                    placeholder="e.g. https://i.pinimg.com/...jpg" 
-                  />
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      value={developerLogo.startsWith('data:') ? '' : developerLogo}
+                      onChange={(e) => {
+                        if (e.target.value.trim()) {
+                          setDeveloperLogo(e.target.value.trim());
+                          localStorage.setItem('portfolio_developer_logo', e.target.value.trim());
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none focus:border-brand-green" 
+                      placeholder="e.g. https://i.pinimg.com/...jpg" 
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const text = await navigator.clipboard.readText();
+                          if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                            setDeveloperLogo(text.trim());
+                            localStorage.setItem('portfolio_developer_logo', text.trim());
+                          } else {
+                            alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                          }
+                        } catch (err) {
+                          alert("Manual paste (Ctrl+V) karein ya browser permission dain.");
+                        }
+                      }}
+                      className="px-3 bg-brand-green/10 hover:bg-brand-green/20 rounded-lg text-[10px] font-bold text-brand-green transition-colors cursor-pointer"
+                    >
+                      Paste
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -4249,41 +4494,177 @@ module.exports = nextConfig;`,
                 {/* URL Paste */}
                 <div>
                   <span className="block text-[9px] text-brand-green-light/70 mb-1">Option B: Paste Image URL</span>
-                  <input 
-                    type="text" 
-                    value={developerHeroImage.startsWith('data:') ? '' : developerHeroImage}
-                    onChange={(e) => {
-                      if (e.target.value.trim()) {
-                        setDeveloperHeroImage(e.target.value.trim());
-                        localStorage.setItem('portfolio_developer_hero_image', e.target.value.trim());
-                      }
-                    }}
-                    className="w-full px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none" 
-                    placeholder="e.g. https://i.pinimg.com/...jpg" 
-                  />
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      value={developerHeroImage.startsWith('data:') ? '' : developerHeroImage}
+                      onChange={(e) => {
+                        if (e.target.value.trim()) {
+                          setDeveloperHeroImage(e.target.value.trim());
+                          localStorage.setItem('portfolio_developer_hero_image', e.target.value.trim());
+                        }
+                      }}
+                      className="flex-1 px-3 py-1.5 bg-white rounded-lg border border-brand-green/10 text-xs font-semibold outline-none focus:border-brand-green" 
+                      placeholder="e.g. https://i.pinimg.com/...jpg" 
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const text = await navigator.clipboard.readText();
+                          if (text && (text.startsWith('http://') || text.startsWith('https://'))) {
+                            setDeveloperHeroImage(text.trim());
+                            localStorage.setItem('portfolio_developer_hero_image', text.trim());
+                          } else {
+                            alert("Clipboard me koi valid URL nahi mila. Please pehle URL copy karein!");
+                          }
+                        } catch (err) {
+                          alert("Manual paste (Ctrl+V) karein ya browser permission dain.");
+                        }
+                      }}
+                      className="px-3 bg-brand-green/10 hover:bg-brand-green/20 rounded-lg text-[10px] font-bold text-brand-green transition-colors cursor-pointer"
+                    >
+                      Paste
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-brand-green/10 flex items-center gap-3">
-                <button
-                  onClick={handleResetCustomizer}
-                  className="px-4 py-3 border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer text-center"
-                >
-                  Reset To Default
-                </button>
+              <div className="pt-4 border-t border-brand-green/10 flex flex-col gap-3">
+                <div className="grid grid-cols-3 gap-2 w-full">
+                  <button
+                    onClick={handleResetCustomizer}
+                    className="px-2 py-3 border border-red-200 text-red-600 hover:bg-red-50 text-[9px] font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer text-center"
+                    title="Reset to default King branding"
+                  >
+                    Reset Defaults
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Apna local browser cache clear karke, /src/config/branding.json (Vercel server config) se live sync karna chahte hain?")) {
+                        localStorage.clear();
+                        window.location.reload();
+                      }
+                    }}
+                    className="px-2 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 text-[9px] font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer text-center"
+                    title="Sync with deployed branding.json file"
+                  >
+                    Sync Server 🔄
+                  </button>
+                  <button
+                    onClick={() => setShowVercelCodeModal(true)}
+                    className="px-2 py-3 bg-brand-yellow hover:bg-brand-yellow-hover text-brand-green font-extrabold text-[9px] uppercase tracking-wider rounded-xl shadow-sm transition-all cursor-pointer text-center flex items-center justify-center gap-0.5"
+                    title="Get JSON configuration code to deploy permanently to Vercel"
+                  >
+                    <span>Vercel Deploy 📋</span>
+                  </button>
+                </div>
                 <button
                   onClick={() => {
                     localStorage.setItem('portfolio_has_customized_v1', 'true');
                     setShowCustomizer(false);
                     alert("Portfolio personalized successfully!");
                   }}
-                  className="flex-1 py-3 bg-brand-green hover:bg-brand-green-light text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
+                  className="w-full py-3 bg-brand-green hover:bg-brand-green-light text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center"
                 >
                   Done / Save Changes
                 </button>
               </div>
 
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ----------------- VERCEL DEPLOYMENT CODE MODAL ----------------- */}
+      {showVercelCodeModal && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-brand-green-dark/85 backdrop-blur-md overflow-y-auto">
+          <div className="bg-white rounded-[32px] max-w-xl w-full shadow-2xl relative border-2 border-brand-yellow animate-fadeIn p-6 sm:p-8 max-h-[95vh] overflow-y-auto">
+            
+            <button 
+              onClick={() => setShowVercelCodeModal(false)}
+              className="absolute top-6 right-6 w-9 h-9 rounded-full bg-brand-bg border border-brand-green/10 flex items-center justify-center text-brand-green hover:bg-brand-green hover:text-white transition-colors duration-200 cursor-pointer"
+              title="Close Panel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Title Block */}
+            <div className="text-left mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/20 border border-brand-yellow/30 text-brand-green text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                <Code2 className="w-3 h-3 text-brand-yellow" />
+                <span>Vercel Deploy Configuration (Roman Urdu Guide)</span>
+              </div>
+              <h3 className="font-display text-2xl font-extrabold text-brand-green leading-snug">
+                Vercel Par Direct Show Karne Ka Tareeqa!
+              </h3>
+              <p className="text-xs text-brand-green-light/75 mt-1 font-sans leading-relaxed">
+                Aapka custom logo, name aur portals local browser me save ho chukay hain. Lekin agar aap chahte hain ke jab bhi koi Vercel link par visits kare to use bhi yehi customized logo aur name show ho, to neeche diye gaye tareeqay ko follow karein:
+              </p>
+            </div>
+
+            {/* Instructions */}
+            <div className="text-left space-y-4 text-xs text-brand-green-dark/85 font-sans leading-relaxed">
+              <div className="p-4 bg-brand-bg rounded-2xl border border-brand-green/5 space-y-2">
+                <p className="font-bold text-brand-green">Step 1: Code Copy Karein</p>
+                <p>Neeche diye gaye custom JSON configuration code ko <strong>"Copy Config Code 📋"</strong> button par click karke copy karain.</p>
+              </div>
+
+              <div className="p-4 bg-brand-bg rounded-2xl border border-brand-green/5 space-y-2">
+                <p className="font-bold text-brand-green">Step 2: File Me Paste Karein</p>
+                <p>Apne project repository (GitHub) me ja kar <code>/src/config/branding.json</code> file ko open karein, aur us me mojood saare content ko delete karke ye copy kiya hua code paste kar dain!</p>
+              </div>
+
+              <div className="p-4 bg-brand-bg rounded-2xl border border-brand-green/5 space-y-2">
+                <p className="font-bold text-brand-green">Step 3: Commit / Push Karein</p>
+                <p>Changes ko commit karein. Vercel automatically naya build start karke sab visitors ke liye aapka customized logo aur name permanently live kar dega!</p>
+              </div>
+            </div>
+
+            {/* Code Textarea container */}
+            <div className="mt-5 text-left space-y-2">
+              <label className="block text-[10px] font-extrabold text-brand-green uppercase tracking-wider">
+                Aapka Custom Config Code (JSON)
+              </label>
+              <textarea
+                readOnly
+                value={JSON.stringify({
+                  developerName,
+                  developerDesignation,
+                  developerLogo,
+                  developerHeroImage,
+                  sectors
+                }, null, 2)}
+                className="w-full h-44 p-4 bg-zinc-950 font-mono text-[10px] text-emerald-400 rounded-2xl border border-white/10 outline-none resize-none focus:border-brand-yellow select-all overflow-y-auto"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="mt-6 pt-4 border-t border-brand-green/10 flex items-center gap-3">
+              <button
+                onClick={() => setShowVercelCodeModal(false)}
+                className="px-4 py-3 bg-brand-bg hover:bg-brand-green/10 border border-brand-green/10 text-brand-green text-xs font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer text-center"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  const configStr = JSON.stringify({
+                    developerName,
+                    developerDesignation,
+                    developerLogo,
+                    developerHeroImage,
+                    sectors
+                  }, null, 2);
+                  navigator.clipboard.writeText(configStr);
+                  alert("Configuration code copy ho chuka hai! Ab isay GitHub/Vercel me `/src/config/branding.json` file me paste kar dain.");
+                }}
+                className="flex-1 py-3 bg-brand-green hover:bg-brand-green-light text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center flex items-center justify-center gap-1.5"
+              >
+                <span>Copy Config Code 📋</span>
+              </button>
             </div>
 
           </div>

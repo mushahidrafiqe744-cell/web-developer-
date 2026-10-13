@@ -1,0 +1,29 @@
+{
+  "developerName": "King",
+  "developerDesignation": "Web Developer",
+  "developerLogo": "https://i.pinimg.com/736x/7a/5d/4a/7a5d4aa1758f0255711c70a2cd15b989.jpg",
+  "developerHeroImage": "/assets/images/hero_abdullah_new.png",
+  "sectors": [
+    {
+      "id": "school",
+      "name": "King",
+      "logoUrl": "https://i.pinimg.com/736x/7a/5d/4a/7a5d4aa1758f0255711c70a2cd15b989.jpg",
+      "theme": "blue",
+      "customUrl": ""
+    },
+    {
+      "id": "academy",
+      "name": "WEB DEVELOPER ACADEMY",
+      "logoUrl": "https://i.pinimg.com/736x/ab/c2/a1/abc2a1813717930f2717478d77579373.jpg",
+      "theme": "green",
+      "customUrl": "https://web-develpor-lgdu.vercel.app/"
+    },
+    {
+      "id": "it",
+      "name": "KHAS IT SOLUTIONS",
+      "logoUrl": "",
+      "theme": "orange",
+      "customUrl": ""
+    }
+  ]
+}
