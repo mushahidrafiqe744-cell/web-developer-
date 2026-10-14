@@ -43,10 +43,10 @@ import {
 const HERO_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const HERO_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
 // Brand logo image path (Silver Wings Emblem / Custom King Emblem)
-const BRAND_LOGO_IMAGE = 'https://i.pinimg.com/736x/7a/5d/4a/7a5d4aa1758f0255711c70a2cd15b989.jpg';
+const BRAND_LOGO_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
 const BRAND_LOGO_FALLBACK = '/assets/images/wings_brand_logo.jpg';
 // About image path
-const ABOUT_IMAGE = 'https://i.pinimg.com/736x/cc/57/9a/cc579a2c37fb70f4a9f2d1eab486f443.jpg';
+const ABOUT_IMAGE = 'https://i.pinimg.com/736x/d7/7e/97/d77e9785655491f25eb96473058fd696.jpg';
 const ABOUT_HOVER_IMAGE = 'https://i.pinimg.com/736x/58/37/0b/58370b3e0233b11eb9323591862b0cf5.jpg';
 // Project images
 const DASHBOARD_IMAGE = '/assets/images/modern_saas_dashboard_1790770399121.jpg';
@@ -184,16 +184,41 @@ const DEFAULT_SECTORS: SectorBranding[] = (defaultBranding.sectors || [
 ]) as SectorBranding[];
 
 function SectorLogo({ id, logoUrl, className = "w-11 h-11" }: { id: string; logoUrl?: string; className?: string }) {
-  const [imgError, setImgError] = React.useState(false);
+  const defaultLocalFallback = id === 'academy' 
+    ? '/assets/images/web_developer_academy_logo.jpg' 
+    : id === 'school' 
+    ? '/assets/images/king_logo.jpg' 
+    : '';
 
-  if (logoUrl && !imgError) {
+  const initialUrl = logoUrl || defaultLocalFallback;
+  const [currentSrc, setCurrentSrc] = React.useState<string>(initialUrl);
+  const [triedFallback, setTriedFallback] = React.useState<boolean>(false);
+  const [showSvgFallback, setShowSvgFallback] = React.useState<boolean>(!initialUrl);
+
+  React.useEffect(() => {
+    const nextUrl = logoUrl || defaultLocalFallback;
+    setCurrentSrc(nextUrl);
+    setTriedFallback(false);
+    setShowSvgFallback(!nextUrl);
+  }, [id, logoUrl, defaultLocalFallback]);
+
+  if (!showSvgFallback && currentSrc) {
     return (
       <div className={`${className} rounded-full overflow-hidden border border-white/20 bg-zinc-950 flex items-center justify-center shrink-0`}>
         <img
-          src={logoUrl}
-          alt="Sector Custom Logo"
+          src={currentSrc}
+          alt={id === 'academy' ? "WEB DEVELOPER ACADEMY" : id === 'school' ? "King" : "Sector Custom Logo"}
           className="w-full h-full object-cover object-center"
-          onError={() => setImgError(true)}
+          referrerPolicy="no-referrer"
+          loading="eager"
+          onError={() => {
+            if (!triedFallback && defaultLocalFallback && currentSrc !== defaultLocalFallback) {
+              setTriedFallback(true);
+              setCurrentSrc(defaultLocalFallback);
+            } else {
+              setShowSvgFallback(true);
+            }
+          }}
         />
       </div>
     );
@@ -217,7 +242,7 @@ function SectorLogo({ id, logoUrl, className = "w-11 h-11" }: { id: string; logo
             <path id="schoolCurve" d="M12,50 A38,38 0 0,1 88,50" fill="none" />
             <text className="font-sans font-black text-[10px] fill-white" letterSpacing="1.5">
               <textPath href="#schoolCurve" startOffset="50%" textAnchor="middle">
-                KHAS SYSTEM
+                KING SYSTEM
               </textPath>
             </text>
           </svg>
@@ -238,9 +263,9 @@ function SectorLogo({ id, logoUrl, className = "w-11 h-11" }: { id: string; logo
             </g>
             <path d="M50,15 L50,6M80,30 L88,22M20,30 L12,22" stroke="#fbbf24" strokeWidth="3.5" strokeLinecap="round" />
             <path id="academyCurve" d="M12,50 A38,38 0 0,1 88,50" fill="none" />
-            <text className="font-sans font-black text-[9.5px] fill-white" letterSpacing="1.6">
+            <text className="font-sans font-black text-[7.5px] fill-white" letterSpacing="1">
               <textPath href="#academyCurve" startOffset="50%" textAnchor="middle">
-                KHAS ACADEMY
+                WEB DEVELOPER ACADEMY
               </textPath>
             </text>
           </svg>
@@ -314,7 +339,7 @@ function BrandLogo({
             <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow inline-block animate-pulse shadow-sm" />
           </div>
           <span className={`text-[8px] font-mono uppercase tracking-[0.24em] ${dark ? 'text-white/60' : 'text-brand-green-light/70'} font-bold mt-1`}>
-            {activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'IT & Software Agency'}
+            {activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'Web Developer Design'}
           </span>
         </div>
       </div>
@@ -412,16 +437,27 @@ export default function App() {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((p: SectorBranding) => {
+          const migrated = parsed.map((p: SectorBranding) => {
             const def = DEFAULT_SECTORS.find(d => d.id === p.id);
-            if (def && p.id === 'school' && (!p.logoUrl || p.name === 'KHAS SCHOOL SYSTEM')) {
-              return { ...p, name: def.name, logoUrl: def.logoUrl };
+            if (p.id === 'school') {
+              return { 
+                ...p, 
+                name: 'King', 
+                logoUrl: p.logoUrl || def?.logoUrl || '/assets/images/king_logo.jpg' 
+              };
             }
-            if (def && p.id === 'academy' && (!p.logoUrl || p.name === 'KHAS ACADEMY' || !p.customUrl)) {
-              return { ...p, name: def.name, logoUrl: def.logoUrl, customUrl: def.customUrl };
+            if (p.id === 'academy') {
+              return { 
+                ...p, 
+                name: 'WEB DEVELOPER ACADEMY', 
+                logoUrl: 'https://i.pinimg.com/736x/ab/c2/a1/abc2a1813717930f2717478d77579373.jpg', 
+                customUrl: 'https://web-develpor-lgdu.vercel.app/' 
+              };
             }
             return p;
           });
+          localStorage.setItem('khas_sectors_branding', JSON.stringify(migrated));
+          return migrated;
         }
       } catch (e) {}
     }
@@ -1563,7 +1599,7 @@ module.exports = nextConfig;`,
         <div className="text-center mb-12 max-w-2xl relative z-10 animate-fadeIn">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-yellow text-xs font-bold uppercase tracking-wider mb-4 shadow-inner">
             <Sparkles className="w-3.5 h-3.5 text-brand-yellow animate-pulse" />
-            <span>Khas Portals Gateway Dashboard</span>
+            <span>Web Developer Design Dashboard</span>
           </div>
           <h1 className="font-display text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
             Select Your Destination
@@ -1609,25 +1645,12 @@ module.exports = nextConfig;`,
             return (
               <div
                 key={sector.id}
-                className={`relative rounded-3xl bg-[#0b0c16]/75 border border-zinc-800 p-8 flex flex-col items-center justify-between transition-all duration-300 min-h-[380px] ${themeColors.border} group overflow-hidden`}
+                className={`relative rounded-3xl bg-[#0b0c16]/75 border border-zinc-800 p-8 flex flex-col items-center justify-between transition-all duration-300 min-h-[380px] ${themeColors.border} group overflow-hidden hover:scale-105 hover:-translate-y-2`}
               >
                 {/* Back Glowing Shadow Orb */}
                 <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-2xl opacity-40 transition-opacity group-hover:opacity-60 ${themeColors.glow}`} />
 
                 {/* Edit Pencil / Settings Button in top right */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingSectorId(sector.id);
-                    setTempSectorName(sector.name);
-                    setTempSectorLogo(sector.logoUrl);
-                    setTempSectorUrl(sector.customUrl || '');
-                  }}
-                  className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/15 transition-all active:scale-90"
-                  title={`Edit ${sector.name} settings`}
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                </button>
 
                 {/* Inline Card Editor Form Overlay */}
                 {isEditing ? (
@@ -1782,11 +1805,25 @@ module.exports = nextConfig;`,
                     {sector.name}
                   </h2>
 
-                  {/* Redirection url indicator badge */}
+                  {/* Redirection url indicator badge & direct link */}
                   {sector.customUrl && (
-                    <div className="mt-2 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-mono text-zinc-400 font-medium tracking-wide flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
-                      <span>Redirect Link Configured ↗</span>
+                    <div className="mt-3 flex flex-col items-center gap-1.5 w-full px-2">
+                      <a
+                        href={sector.customUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        className="px-3.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/40 rounded-full text-xs font-mono font-bold tracking-wide flex items-center gap-1.5 transition-all shadow-md hover:scale-105 active:scale-95"
+                        title={`Open ${sector.customUrl}`}
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Visit Website ↗</span>
+                      </a>
+                      <span className="text-[10px] font-mono text-zinc-400">
+                        {sector.customUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -1814,7 +1851,7 @@ module.exports = nextConfig;`,
             }}
             className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-brand-yellow hover:border-brand-yellow font-extrabold text-xs uppercase tracking-wider rounded-full transition-all duration-300 shadow-md active:scale-95 flex items-center gap-2"
           >
-            <span>Enter Developer Portfolio ({developerName} Web Dev)</span>
+            <span>Enter Main Portfolio ({developerName})</span>
             <span className="text-base">→</span>
           </button>
         </div>
@@ -1824,7 +1861,7 @@ module.exports = nextConfig;`,
 
   const currentName = activeSector ? activeSector.name : developerName;
   const currentDesignation = activeSector 
-    ? (activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'IT & Software Agency') 
+    ? (activeSector.id === 'school' ? 'Education Portal' : activeSector.id === 'academy' ? 'Academy & Coaching' : 'Web Developer Agency') 
     : developerDesignation;
   const currentLogo = activeSector ? activeSector.logoUrl : developerLogo;
   const currentHeroImage = activeSector ? (activeSector.logoUrl || developerHeroImage) : developerHeroImage;
@@ -2010,20 +2047,7 @@ module.exports = nextConfig;`,
                   <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </button>
-
-              {activeSector?.customUrl && (
-                <a 
-                  href={activeSector.customUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-8 py-4 bg-brand-yellow hover:bg-brand-yellow-hover text-brand-green font-extrabold rounded-full transition-all duration-300 text-center flex items-center justify-center gap-2 shadow-lg animate-pulse hover:animate-none"
-                  title={`Open configured link: ${activeSector.customUrl}`}
-                >
-                  <span>🌐 Visit Official Portal</span>
-                  <ExternalLink className="w-4 h-4 text-brand-green" />
-                </a>
-              )}
-              
+              <span className="text-xl font-bold text-brand-green">Web developer</span>
               <button 
                 onClick={() => setShowHireModal(true)}
                 className="w-full sm:w-auto px-8 py-4 border-2 border-brand-green/20 hover:border-brand-green hover:bg-brand-green/5 text-brand-green font-bold rounded-full transition-all duration-300 text-center"
@@ -4197,6 +4221,19 @@ module.exports = nextConfig;`,
             <p className="text-[10px] font-mono text-zinc-400 mt-4 uppercase tracking-[0.3em]">
               Please hold while the portal opens...
             </p>
+
+            {transitionPendingSector?.customUrl && (
+              <div className="mt-4 pointer-events-auto z-40">
+                <a
+                  href={transitionPendingSector.customUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-xs uppercase tracking-wider rounded-full shadow-2xl transition-all duration-200 inline-flex items-center gap-2 hover:scale-105 active:scale-95"
+                >
+                  <span>🌐 Open Website Now ↗</span>
+                </a>
+              </div>
+            )}
 
             {/* Cinematic Progress Bar */}
             <div className="mt-8 w-64 h-1.5 bg-white/5 border border-white/10 rounded-full overflow-hidden p-0.5 relative">
