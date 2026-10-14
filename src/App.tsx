@@ -176,8 +176,8 @@ const DEFAULT_SECTORS: SectorBranding[] = (defaultBranding.sectors || [
   },
   {
     id: 'it',
-    name: 'KHAS IT SOLUTIONS',
-    logoUrl: '',
+    name: 'Abdullah',
+    logoUrl: 'https://i.pinimg.com/736x/d7/7e/97/d77e9785655491f25eb96473058fd696.jpg',
     theme: 'orange',
     customUrl: ''
   }
